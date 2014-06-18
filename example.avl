@@ -1,0 +1,21 @@
+
+
+x = 12;
+
+fun out1,out2 : foo(in1,in1){
+return 13,14;
+};
+
+y = { 
+field1 = 15; 
+field2 = 16;
+subfun = fun out : (in){foo(in,in+1);};
+};
+
+w,z = foo(17,18);
+
+array= 1:10;
+
+x = fun out : (in){ return in+1;};
+
+x(15);
