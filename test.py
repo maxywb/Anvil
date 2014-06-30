@@ -38,13 +38,13 @@ a + b - c * 2 % foo(d,3,4+5);
 x = 12;
 y = m*x+b;
 '''
-    simple2 = "y = m*x+b;"
+    simple2 = "m*x+b;"
 
     error = "y = asdf = 12;"
 
-    simple3="1+2*(3*(x+y));"
+    simple3="1+2*(3*(x+y-1));"
     simple4 ="1+foo(x,y);"
-    current = simple4
+    current = simple3
 
 
 
@@ -53,7 +53,7 @@ y = m*x+b;
 
     tokenStream = Tokenizer.TokenStream(tokens)
     parser = Parser.Parser(tokenStream)
-    root = parser.parse()
+    root = parser.parseStatement()
 
     print root
 
