@@ -5,6 +5,18 @@ def printer(thing,message=""):
         print t,
     print ""
 
+def wireExpressionTree(operands,operators):
+    op = operators.pop()
+
+    right = operands.pop()
+    left = operands.pop()
+
+    op.left = left
+    op.right= right
+    left.parent = op
+    right.parent = op
+    return op
+
 binaryOperators = ["Add","Minus","Multiply","Divide","Modulo"]
 sentinel = "Sentinel"
 operatorPrecedence = {"LeftParen":sys.maxint,sentinel:-1,"Add":1,"Minus":1,"Multiply":2,"Divide":2,"Modulo":2}
@@ -15,12 +27,6 @@ def precedes(this,that):
     else:
         return operatorPrecedence[this.token.kind] > operatorPrecedence[that.token.kind]
 
-def wireExpressionTree(operands,operators):
-    current = None
-    while True:
-        current = operators.pop()
-        if current is sentinel:
-            break
         
         
 
@@ -142,7 +148,7 @@ class Parser:
         self.currentToken = self.tokenStream.getNextToken()
 
         mine= self.currentToken
-
+        print self.currentToken
         if self.see(["Id","Number"]):
 
             if self.peek("LeftParen"):
@@ -150,38 +156,72 @@ class Parser:
             else:
                 current = self.makeNode()
 
+
+
             operands.append(current)
+
             self.parseExpression(operands,operators,terminator)
+
         elif self.see(binaryOperators):
             current = self.makeNode()
-            operators.append(current)
+
+            printer(operands,"operands")
+            printer(operators,"operators")
+
+
+            if precedes(current,operators[-1]):
+                operators.append(current)
+
+                if operators[-1] is not sentinel and len(operands)> 2:
+                    printer(operands)
+                    prev = wireExpressionTree(operands,operators)
+                    operands.append(prev)
+
+
+            else:
+                prev= current
+                current = wireExpressionTree(operands,operators)
+                operands.append(current)
+                operators.append(prev)
+
+
             self.parseExpression(operands,operators,terminator)
-            return
+
+
 
         elif self.see("LeftParen"):
             
             lp = self.makeNode()
-            operators.append(lp)
+            
+            subOperands= []
+            subOperators = [sentinel]
+            printer(operands)
+            printer(operators)
+            self.parseExpression(subOperands,subOperators,"RightParen")
 
-            self.parseExpression(operands,operators,terminator)
-
-            return
+            subtree = wireExpressionTree(subOperands,subOperators)
+            operands.append(subtree)
 
         elif self.see(terminator):
             return Terminator(self.currentToken) 
+
+
 
     def parseStatement(self):
         self.ctr = 0
         operands = []
         operators = [sentinel]
 
-        root = Root()
-        self.currentNode = root
         self.parseExpression(operands,operators,"Semicolon")
+
+        while not operators[-1] is sentinel:
+            current = wireExpressionTree(operands,operators)
+            operands.append(current)
+
 
         printer(operands,"operands")
         printer(operators,"operators")
 
-        root = wireExpressionTree(operands,operators)
+        root = operands.pop()
 
         return root

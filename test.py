@@ -42,7 +42,7 @@ y = m*x+b;
 
     error = "y = asdf = 12;"
 
-    simple3="1+2*(3*(x+y-1));"
+    simple3="1+2*(3*(x*4+y));"
     simple4 ="1+foo(x,y);"
     current = simple3
 
