@@ -42,7 +42,14 @@ y = m*x+b;
 
     error = "y = asdf = 12;"
 
-    tokens = Tokenizer.tokenize(error)
+    simple3="1+2*(3*(x+y));"
+    simple4 ="1+foo(x,y);"
+    current = simple4
+
+
+
+    print current
+    tokens = Tokenizer.tokenize(current)
 
     tokenStream = Tokenizer.TokenStream(tokens)
     parser = Parser.Parser(tokenStream)

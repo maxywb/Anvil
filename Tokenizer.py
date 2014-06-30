@@ -89,8 +89,11 @@ class TokenStream:
 
     def getNextToken(self):
         ret = self.current()
-        self.pointer = self.pointer + 1
+        self.advance()
         return ret
+
+    def advance(self):
+        self.pointer = self.pointer + 1
 
     def peek(self):
         return self[self.pointer]
