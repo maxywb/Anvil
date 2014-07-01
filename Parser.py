@@ -121,7 +121,7 @@ class FunctionCall:
         for arg in self.arguments:
             argStr = argStr+"%s,"%arg
 
-        return "(%s(%s))"%(self.token.value,argStr)
+        return "%s(%s)"%(self.token.value,argStr)
 
     
 ####################################################################################################
@@ -142,21 +142,41 @@ class Parser:
         return self.tokenStream.peek().kind in anyOfThese
 
     def parseFunctionCall(self):
-        raise Exception("not supported yet")
+        print "function",self.currentToken
+        funcId = self.currentToken
+        args = []
+        current = self.tokenStream.getNextToken() # nuke the (
+        while not current.kind == "RightParen":
+        
+            operands = []
+            operators = [sentinel]
+            
+            print "e",self.parseExpression(operands,operators,["Comma","RightParen"])
+            
+            printer(operands,"operands")
+            printer(operators,"operators")
+
+            if len(operators) > 1:
+                curArg = wireExpressionTree(operands,operators)                
+            else:
+                curArg = operands[-1]
+
+            args.append(curArg)
+
+            #self.tokenStream.advance() # nuke , or )
+            current = self.currentToken
+            print "peek",current.value,self.tokenStream.peek().value,self.tokenStream.peek(1).value
+        return FunctionCall(funcId,args)
 
     def parseExpression(self,operands,operators,terminator):
         self.currentToken = self.tokenStream.getNextToken()
 
-        mine= self.currentToken
-        print self.currentToken
         if self.see(["Id","Number"]):
 
             if self.peek("LeftParen"):
                 current = self.parseFunctionCall()
             else:
                 current = self.makeNode()
-
-
 
             operands.append(current)
 
@@ -165,10 +185,6 @@ class Parser:
         elif self.see(binaryOperators):
             current = self.makeNode()
 
-            printer(operands,"operands")
-            printer(operators,"operators")
-
-
             if precedes(current,operators[-1]):
                 operators.append(current)
 
@@ -176,18 +192,13 @@ class Parser:
                     printer(operands)
                     prev = wireExpressionTree(operands,operators)
                     operands.append(prev)
-
-
             else:
                 prev= current
                 current = wireExpressionTree(operands,operators)
                 operands.append(current)
                 operators.append(prev)
 
-
             self.parseExpression(operands,operators,terminator)
-
-
 
         elif self.see("LeftParen"):
             
@@ -201,10 +212,10 @@ class Parser:
 
             subtree = wireExpressionTree(subOperands,subOperators)
             operands.append(subtree)
+            self.parseExpression(operands,operators,terminator)
 
         elif self.see(terminator):
             return Terminator(self.currentToken) 
-
 
 
     def parseStatement(self):

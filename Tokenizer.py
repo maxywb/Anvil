@@ -95,5 +95,5 @@ class TokenStream:
     def advance(self):
         self.pointer = self.pointer + 1
 
-    def peek(self):
-        return self[self.pointer]
+    def peek(self,index=0):
+        return self[self.pointer+index]

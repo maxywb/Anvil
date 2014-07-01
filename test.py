@@ -43,7 +43,7 @@ y = m*x+b;
     error = "y = asdf = 12;"
 
     simple3="1+2*(3*(x*4+y));"
-    simple4 ="1+foo(x,y);"
+    simple4 ="1+foo(x,y+(1*2)+z);"
     current = simple3
 
 
@@ -63,3 +63,4 @@ y = m*x+b;
 
 
 testParser()
+
