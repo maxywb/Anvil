@@ -1,3 +1,5 @@
+
+
 import sys
 def printer(thing,message=""):
     print message,
@@ -17,6 +19,7 @@ def wireExpressionTree(operands,operators):
     right.parent = op
     return op
 
+keywords = ["def","if","else","elif","for","while","struct"]
 binaryOperators = ["Add","Minus","Multiply","Divide","Modulo"]
 sentinel = "Sentinel"
 operatorPrecedence = {"LeftParen":sys.maxint,sentinel:-1,"Add":1,"Minus":1,"Multiply":2,"Divide":2,"Modulo":2}
@@ -30,8 +33,7 @@ def precedes(this,that):
         
         
 
-keywords = ["asdf"]
-scope = ["asdf"]
+
 
 ## TODO change these to named tuples
 
@@ -59,7 +61,7 @@ class Root:
 
 class StatementList:
     def __init__(self):
-        self.statements = list()
+        self.statements = None
     def __str__(self):
         tostring = ""
         for s in self.statements:
@@ -82,7 +84,7 @@ class Assignment:
         self.lhs = None
         self.rhs = None
     def __str__(self):
-        return "([%s]%s=%s)"%(self.token.value,self.lhs,self.rhs)
+        return "%s=%s"%(self.lhs,self.rhs)
     
 class LeftParen:
     def __init__(self,token):
@@ -123,13 +125,23 @@ class FunctionCall:
 
         return "%s(%s)"%(self.token.value,argStr)
 
+class Scope:
+    def __init__(self,token,statements):
+        self.statements = statements
+        self.line = token.line
+        self.column = token.column
+    def __str__(self):
+        tostring = "{\n"
+        for s in self.statements:
+            tostring = tostring + ":%s\n"%s
+        tostring = tostring + "}"
+        return tostring
     
 ####################################################################################################
 
 
 class Parser:
-    def __init__(self,tokenStream):
-        self.tokenStream = tokenStream
+    def __init__(self):
         self.nodeFactory = NodeFactory()
 
     def makeNode(self):
@@ -138,11 +150,10 @@ class Parser:
     def see(self,anyOfThese):
         return self.currentToken.kind in anyOfThese
 
-    def peek(self,anyOfThese):
-        return self.tokenStream.peek().kind in anyOfThese
+    def peek(self,anyOfThese,index=0):
+        return self.tokenStream.peek(index).kind in anyOfThese
 
     def parseFunctionCall(self):
-        print "function",self.currentToken
         funcId = self.currentToken
         args = []
         current = self.tokenStream.getNextToken() # nuke the (
@@ -150,11 +161,7 @@ class Parser:
         
             operands = []
             operators = [sentinel]
-            
-            print "e",self.parseExpression(operands,operators,["Comma","RightParen"])
-            
-            printer(operands,"operands")
-            printer(operators,"operators")
+            self.parseExpression(operands,operators,["Comma","RightParen"])
 
             if len(operators) > 1:
                 curArg = wireExpressionTree(operands,operators)                
@@ -163,10 +170,25 @@ class Parser:
 
             args.append(curArg)
 
-            #self.tokenStream.advance() # nuke , or )
             current = self.currentToken
-            print "peek",current.value,self.tokenStream.peek().value,self.tokenStream.peek(1).value
+
         return FunctionCall(funcId,args)
+
+    def parseScope(self):
+
+        statements = []
+        current = self.currentToken
+        start = current
+        while not current.kind == "RightBrace":
+        
+            stmt = self.parseStatement()
+            statements.append(stmt)
+            current = self.currentToken#tokenStream.getNextToken() 
+            current = self.tokenStream.peek(0)
+
+
+        self.tokenStream.getNextToken()
+        return Scope(start,statements)
 
     def parseExpression(self,operands,operators,terminator):
         self.currentToken = self.tokenStream.getNextToken()
@@ -189,7 +211,6 @@ class Parser:
                 operators.append(current)
 
                 if operators[-1] is not sentinel and len(operands)> 2:
-                    printer(operands)
                     prev = wireExpressionTree(operands,operators)
                     operands.append(prev)
             else:
@@ -199,40 +220,94 @@ class Parser:
                 operators.append(prev)
 
             self.parseExpression(operands,operators,terminator)
-
-        elif self.see("LeftParen"):
             
+        elif self.see("LeftParen"):
+
             lp = self.makeNode()
             
             subOperands= []
             subOperators = [sentinel]
-            printer(operands)
-            printer(operators)
+
             self.parseExpression(subOperands,subOperators,"RightParen")
 
             subtree = wireExpressionTree(subOperands,subOperators)
             operands.append(subtree)
             self.parseExpression(operands,operators,terminator)
 
+        elif self.see("LeftBrace"):
+
+            scope = self.parseScope()
+            operands.append(scope)
+
         elif self.see(terminator):
             return Terminator(self.currentToken) 
-
+        else:
+            raise Exception("unexpected "+str(self.currentToken))
 
     def parseStatement(self):
         self.ctr = 0
         operands = []
         operators = [sentinel]
 
-        self.parseExpression(operands,operators,"Semicolon")
+        if self.peek("Assign",1):
+            self.currentToken = self.tokenStream.getNextToken()
+            lhs = Id(self.currentToken)
+            eq = self.tokenStream.getNextToken()
+            assign = Assignment(eq)
+            assign.lhs = lhs
 
-        while not operators[-1] is sentinel:
-            current = wireExpressionTree(operands,operators)
-            operands.append(current)
+            self.parseExpression(operands,operators,"Semicolon")
+
+            while not operators[-1] is sentinel:
+                current = wireExpressionTree(operands,operators)
+                operands.append(current)
 
 
-        printer(operands,"operands")
-        printer(operators,"operators")
+            assign.rhs = operands[-1]
 
-        root = operands.pop()
+            root = assign
+
+        else:
+            self.parseExpression(operands,operators,"Semicolon")
+
+            while not operators[-1] is sentinel:
+                current = wireExpressionTree(operands,operators)
+                operands.append(current)
+
+            root = operands.pop()
 
         return root
+
+    def parseKeywords(self):
+        if self.see("if"):
+            self.parseConditional()
+        elif self.see("def"):
+            self.parseFunctionDefinition()
+        elif self.see("for"):
+            self.parseForLoop()
+        elif self.see("while"):
+            self.parseWhileLoop()
+        elif self.see("struct"):
+            self.parseStruct()
+        else:
+            ct = self.currentToken
+            tt = (ct.kind,ct.value,ct.line,ct.column)
+            raise Exception("Unexpected Token %s %s %d %d"%tt)
+
+    def parseAny(self):
+        statements = []
+        while not self.peek("EOF"):
+            if self.peek(keywords):
+                parseKeywords()
+            else:
+                stmt = self.parseStatement()
+                statements.append(stmt)
+        
+
+        stmts = StatementList()
+        stmts.statements = statements
+        return stmts
+
+    def parse(self,tokenStream):
+        self.tokenStream = tokenStream
+        return self.parseAny()        

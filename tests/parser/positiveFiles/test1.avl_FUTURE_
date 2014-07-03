@@ -1,0 +1,21 @@
+x = y;
+x + y;
+x - y;
+x * y;
+x / y;
+x % y;
+x < y;
+x > y;
+x << y;
+x >> y;
+x >= y;
+x <= y;
+x != y;
+x ^ y;
+x == y;
+x ** y;
+foo();
+x[];
+x; // this is a comment
+
+"asdfasdf+_)(*&^%$#@!~`";
