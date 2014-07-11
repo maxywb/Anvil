@@ -1,1 +1,1 @@
-**An**other **Vi**le **L**anguage
+Another Vile Language
