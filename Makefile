@@ -1,4 +1,6 @@
-derived = `pwd`/derived
+base = $(shell pwd)
+
+derived = $(base)/derived
 
 bisonIn = parser.y
 flexIn = scanner.lex
@@ -11,13 +13,15 @@ flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutHeader)\"
 
 executable = testing
 
-default:
+includes = -I$(base)
 
+default:
+	@echo $(base)
 	mkdir -p derived
-	bison -d $(bisonIn) -o $(bisonOut)
+	bison -d $(bisonIn) -o $(bisonOut) 
 	flex --outfile=$(flexOut) $(flexIn)
 
-	g++ -o $(executable) main.cpp $(bisonOut) $(flexBisonDefines)
+	g++ -o $(executable) main.cpp $(bisonOut) $(flexBisonDefines) $(includes)
 
 clean:
 	@rm -r $(derived)

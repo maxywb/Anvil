@@ -5,8 +5,9 @@
 #include <map>
 #include <cstdlib>
 #include <cstdio>
-#include FLEX_FILE
 
+#include FLEX_FILE
+#include "Nodes.hpp"
 
   extern FILE * yyin;
 
