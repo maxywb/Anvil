@@ -1,53 +1,80 @@
 %{
 #define YYDEBUG 1
+
+  /*
+   * have to include Nodes.hpp first otherwise compile errors
+   */
+#include "Nodes.hpp"
+#include FLEX_FILE
+
 #include <iostream>
 #include <string>
 #include <map>
 #include <cstdlib>
 #include <cstdio>
 
-#include FLEX_FILE
-#include "Nodes.hpp"
 
   extern FILE * yyin;
-
-
-  //-- Lexer prototype required by bison, aka getNextToken()
   int yylex(); 
-  int yyerror(const char *p) { cerr << "Error!" << endl; }
+  int yyerror(const char *p) { cerr << p << " Error!" << endl; }
 %}
+
 %debug
 %error-verbose
- //-- SYMBOL SEMANTIC VALUES -----------------------------
+
+
 %union {
-  int val; 
+  anvil::Expression * expr;
+  anvil::Number * number;
+  anvil::BinaryOperator * binaryOperator;
   char sym;
+  double val;
 };
+
+%type <number> literal
+%type <expr> expression 
+%token <sym>  ADD MULTIPLY LP RP SEMI
+
+%type <sym> statement  
 %token <val> NUM
-%token <sym> ADD MULTIPLY LP RP SEMI
-%type <val> statement expression literal
+
+
+%left ADD
+%left MULTIPLY
+
 
 %%
 statement_list: statement statement_list  | statement
 
 statement: expression SEMI
 {
-  std::cout << $$ << std::endl;
+  std::cout << $1->print() << std::endl;
 }
 
 | SEMI
 
 expression: literal
 {
-  $$ = $1;
+  $$ = static_cast<anvil::Expression *>($1);
 }
 | expression ADD expression
 {
-  $$ = $1 + $3;
+  $$ = new anvil::BinaryOperator(
+			     static_cast<anvil::Expression *>($1),
+			     static_cast<anvil::Expression *>($3),
+			     anvil::operators::ADD);
+
+  std::cout << "expr: " << $$->print() << std::endl;
+
+
+
 }
 | expression MULTIPLY expression
 {
-  $$ = $1 * $3;
+  $$ = new anvil::BinaryOperator(
+			     static_cast<anvil::Expression *>($1),
+			     static_cast<anvil::Expression *>($3),
+			     anvil::operators::MULTIPLY);
 }
 | LP expression RP
 {
@@ -56,7 +83,8 @@ expression: literal
 
 literal: NUM
 {
-  $$ = $1;
+  $$ = new anvil::Number(static_cast<size_t>($1));
+  std::cout << $1 << std::endl;
 }
 
 

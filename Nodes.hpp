@@ -5,26 +5,26 @@
 #include <ostream>
 #include <sstream>
 
-
 namespace anvil{
-
   namespace operators{
-    enum BinaryOperatorType {
-      ADD,
-      MULTIPLY
-    };
+      enum BinaryOperatorType {
+	ADD,
+	MULTIPLY
+      };
   }
 
   class Node 
   {
   protected:
-    size_t m_id;
-    virtual std::string toString();
+    virtual std::string toString(){
+      return "node";
+    }
 
   public:
-    explicit Node(size_t id) 
-      : m_id(id) {}
-
+    std::string print(){
+      return toString();
+    }
+    Node(){}
     std::ostream& operator<<(std::ostream& os){
       os << toString();
     }  
@@ -35,10 +35,15 @@ namespace anvil{
   {
   protected:
     Expression * m_parent;
+    std::string toString(){
+      return "expr";
+    }
 
   public:
-    Expression(size_t id, Expression * parent) 
-      : Node(id), m_parent(parent) {}
+    Expression() {}
+    void setParent(Expression * parent) {
+      m_parent = parent;
+    }
 
   };
 
@@ -48,8 +53,8 @@ namespace anvil{
     double m_value;
 
   public:
-    Number(size_t id, Expression * parent, double value) 
-      : Expression(id,parent), m_value(value) {}
+    Number(double value) 
+      :  m_value(value) {}
 
   protected:
     std::string toString(){
@@ -68,9 +73,9 @@ namespace anvil{
     Expression * m_right;
 
   public:
-    BinaryOperator(size_t id, Expression * parent, Expression * left, Expression * right,
+    BinaryOperator(Expression * left, Expression * right,
 		   operators::BinaryOperatorType op)
-      : Expression(id,parent), m_left(left), m_right(right), m_operator(op) {}
+      : m_left(left), m_right(right), m_operator(op) {}
 
   protected:
     std::string toString(){
