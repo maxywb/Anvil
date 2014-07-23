@@ -1,4 +1,4 @@
-#include "Nodes.hpp"
+#include "Node/AllNodes.hpp"
 #include BISON_FILE
 
 

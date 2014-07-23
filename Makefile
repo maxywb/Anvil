@@ -13,7 +13,7 @@ flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutHeader)\"
 
 executable = testing
 
-includes = -I$(base)
+includes = -I$(base) -I$(base)/Node
 
 default:
 	@echo $(base)

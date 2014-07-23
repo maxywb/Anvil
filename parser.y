@@ -4,7 +4,8 @@
   /*
    * have to include Nodes.hpp first otherwise compile errors
    */
-#include "Nodes.hpp"
+#include "Node/AllNodes.hpp"
+#include "Node/operators.hpp"
 #include FLEX_FILE
 
 #include <iostream>
@@ -27,20 +28,25 @@
   anvil::Expression * expr;
   anvil::Number * number;
   anvil::BinaryOperator * binaryOperator;
+  anvil::FunctionCall * functionCall;
   char sym;
   double val;
+  std::string * str;
 };
 
 %type <number> literal
 %type <expr> expression 
-%token <sym>  ADD MULTIPLY LP RP SEMI
-
 %type <sym> statement  
+%type <functionCall> function_call
+
+
+%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LP RP SEMI COMMA
+%token <str> ID 
 %token <val> NUM
 
 
-%left ADD
-%left MULTIPLY
+%left ADD MINUS
+%left MULTIPLY DIVIDE
 
 
 %%
@@ -53,39 +59,47 @@ statement: expression SEMI
 
 | SEMI
 
-expression: literal
+expression: expression COMMA expression
 {
-  $$ = static_cast<anvil::Expression *>($1);
+  $$ = new anvil::Comma($1,$3);
+}
+|
+literal
+{
+  $$ = $1;
 }
 | expression ADD expression
 {
-  $$ = new anvil::BinaryOperator(
-			     static_cast<anvil::Expression *>($1),
-			     static_cast<anvil::Expression *>($3),
-			     anvil::operators::ADD);
-
-  std::cout << "expr: " << $$->print() << std::endl;
-
-
-
+  $$ = new anvil::Addition($1,$3);			   
 }
 | expression MULTIPLY expression
 {
-  $$ = new anvil::BinaryOperator(
-			     static_cast<anvil::Expression *>($1),
-			     static_cast<anvil::Expression *>($3),
-			     anvil::operators::MULTIPLY);
+  $$ = new anvil::Multiplication($1,$3);
+
 }
 | LP expression RP
 {
   $$ = $2;
 }
+| function_call 
+{
+  $$ = $1;
+}
 
 literal: NUM
 {
-  $$ = new anvil::Number(static_cast<size_t>($1));
-  std::cout << $1 << std::endl;
+  $$ = new anvil::Number(static_cast<double>($1));
+  
 }
 
+function_call: ID LP RP
+{
+  $$ = new anvil::FunctionCall(*$1,NULL);
+}
+|
+ID LP expression RP
+{
+  $$ = new anvil::FunctionCall(*$1,$3);
+}
 
 %%
