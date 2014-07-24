@@ -18,46 +18,65 @@
   extern FILE * yyin;
   int yylex(); 
   int yyerror(const char *p) { cerr << p << " Error!" << endl; }
+
+  anvil::Node * root;
+
 %}
 
 %debug
 %error-verbose
 
 
+
 %union {
   anvil::Expression * expr;
+  anvil::Statement * stmt;
   anvil::Number * number;
   anvil::BinaryOperator * binaryOperator;
   anvil::FunctionCall * functionCall;
+
   char sym;
   double val;
   std::string * str;
 };
 
+
+//terminals
 %type <number> literal
 %type <expr> expression 
-%type <sym> statement  
+%type <stmt> statement statement_list
 %type <functionCall> function_call
 
 
-%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LP RP SEMI COMMA
+ //tokens
+%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA
 %token <str> ID 
 %token <val> NUM
 
-
+ //associativity
 %left ADD MINUS
 %left MULTIPLY DIVIDE
 
-
 %%
-statement_list: statement statement_list  | statement
+
+top : statement_list
+{
+  root = $1;
+}
+
+
+statement_list: statement statement_list
+{
+  $1->setNext($2);
+}
+| statement
 
 statement: expression SEMI
 {
-  std::cout << $1->print() << std::endl;
+  $$ = $1;
 }
-
 | SEMI
+
 
 expression: expression COMMA expression
 {

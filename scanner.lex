@@ -41,8 +41,11 @@ using namespace std;
 
 "("      { return LP; }
 ")"      { return RP; }
+"{"      { return LC; }
+"}"      { return RC; }
+
 ";"      { return SEMI; }
 <<EOF>>  { return 0; }
 [ \t\n]+ { }
-.        { cerr << "Unrecognized token!" << endl; exit(1); }
+.        { cerr << "Unrecognized token: " << yytext[0] << " " << yytext << endl; exit(1); }
 %%

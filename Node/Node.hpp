@@ -15,10 +15,8 @@ namespace anvil{
       return "node";
     }
 
-
     Node(){}
   };
-
 
 }
 #endif

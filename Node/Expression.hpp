@@ -2,13 +2,14 @@
 #define ANVIL_EXPRESSION_HPP
 
 #include "Node.hpp"
+#include "Statement.hpp"
 
 #include <string>
 #include <sstream>
 #include <ostream>
 
 namespace anvil{
-  class Expression : public Node
+  class Expression : public Statement
   {
   protected:
     Expression * m_parent;
