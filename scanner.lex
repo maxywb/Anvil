@@ -2,12 +2,15 @@
 #include BISON_FILE
 #include <iostream>
 #include <string>
-using namespace std;
+#include <vector>
+
 %}
 
 %option noyywrap
 
 %%
+
+"def" { return DEF;}
 
 [0-9]+   { yylval.val = atoi(yytext); return NUM; }
 "+"  { yylval.sym = yytext[0]; return ADD; }
@@ -34,20 +37,21 @@ using namespace std;
 
 "="   { yylval.sym = yytext[0]; return ASSIGN; }
 
-
 [a-zA-Z]+[a-zA-A0-9]* { 
-  yylval.str = new std::string(&yytext[0],yyleng); 
+  yylval.string = new std::string(&yytext[0],yyleng); 
   return ID;
 }
-
 
 "("      { return LP; }
 ")"      { return RP; }
 "{"      { return LC; }
 "}"      { return RC; }
 
+
+
+
 ";"      { return SEMI; }
 <<EOF>>  { return 0; }
 [ \t\n]+ { }
-.        { cerr << "Unrecognized token: " << yytext[0] << " " << yytext << endl; exit(1); }
+.        { std::cerr << "Unrecognized token: " << yytext[0] << " " << yytext << std::endl; exit(1); }
 %%

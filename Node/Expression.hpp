@@ -40,7 +40,7 @@ namespace anvil{
   public:
     Number(double value) 
       :  m_value(value) {}
-
+    
     std::string print(){
       std::ostringstream strs;
       strs << m_value;

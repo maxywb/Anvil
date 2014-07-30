@@ -4,3 +4,5 @@
 2*3,4+5;
 
 var = something();
+
+def foo(x,y,z)
