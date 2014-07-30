@@ -146,9 +146,9 @@ assignment_statement: ID ASSIGN expression
   $$ = new anvil::Assignment($1,$3);
 }
 
-function_definition: DEF ID LP function_parameters RP
+function_definition: DEF ID LP function_parameters RP LC statement_list RC
 {
-  $$ = new anvil::FunctionDefinition($2,$4);
+  $$ = new anvil::FunctionDefinition($2,$4,$7);
 }
 
 function_parameters: ID COMMA function_parameters

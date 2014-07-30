@@ -18,9 +18,12 @@ namespace anvil{
     std::string * m_name;
     std::list<std::string *> * m_parameters;
 
+    Statement * m_bodyStart;
+
   public:
-    FunctionDefinition(std::string * name, std::list<std::string *> * params) 
-      : m_name(name), m_parameters(params) {}
+    FunctionDefinition(std::string * name, std::list<std::string *> * params, 
+		       Statement * bodyStart) 
+      : m_name(name), m_parameters(params), m_bodyStart(bodyStart){}
 
     std::string print(){
       std::ostringstream strs;
@@ -32,16 +35,23 @@ namespace anvil{
 	  itr != m_parameters->end();
 	  itr++){
 	strs << *(*itr);
-      strs << ",";
+	strs << ",";
       }
       strs << ")";
+      strs << std::endl << "{" << std::endl;
+      anvil::Statement * runner = m_bodyStart;
+      while(runner){
+	strs << ":";
+	strs << runner->print();
+	strs << std::endl;
+	runner = runner->next();
+      }
+      strs << "}";
 
+    return strs.str();
+  }
 
-
-      return strs.str();
-    }
-
-  };
+};
 
 
 

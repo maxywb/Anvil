@@ -5,4 +5,7 @@
 
 var = something();
 
-def foo(x,y,z)
+def foo(x,y,z) 
+{
+w = 12;
+}
