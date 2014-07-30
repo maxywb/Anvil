@@ -9,21 +9,6 @@
 #include <ostream>
 
 namespace anvil{
-  class Expression : public Statement
-  {
-  protected:
-    Expression * m_parent;
-
-  public:
-    std::string print(){
-      return "expr";
-    }
-    Expression() {}
-    void setParent(Expression * parent) {
-      m_parent = parent;
-    }
-
-  };
 
   class FunctionCall : public Expression
   {

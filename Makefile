@@ -11,7 +11,7 @@ flexOut = $(derived)/scanner.h
 
 flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutHeader)\"
 
-executable = testing
+executable = anvil
 
 includes = -I$(base) -I$(base)/Node
 
@@ -26,3 +26,6 @@ default:
 clean:
 	@rm -r $(derived)
 	@rm $(executable)
+
+run: default
+	./anvil test.avl	

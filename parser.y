@@ -34,6 +34,7 @@
   anvil::Number * number;
   anvil::BinaryOperator * binaryOperator;
   anvil::FunctionCall * functionCall;
+  anvil::Assignment * assignment;
 
   char sym;
   double val;
@@ -46,14 +47,15 @@
 %type <expr> expression 
 %type <stmt> statement statement_list
 %type <functionCall> function_call
-
+%type <assignment> assignment_statement
 
  //tokens
-%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA
+%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN
 %token <str> ID 
 %token <val> NUM
 
  //associativity
+%left COMMA
 %left ADD MINUS
 %left MULTIPLY DIVIDE
 
@@ -72,6 +74,10 @@ statement_list: statement statement_list
 | statement
 
 statement: expression SEMI
+{
+  $$ = $1;
+}
+| assignment_statement SEMI
 {
   $$ = $1;
 }
@@ -119,6 +125,11 @@ function_call: ID LP RP
 ID LP expression RP
 {
   $$ = new anvil::FunctionCall(*$1,$3);
+}
+
+assignment_statement: ID ASSIGN expression
+{
+  $$ = new anvil::Assignment($1,$3);
 }
 
 %%

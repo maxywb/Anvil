@@ -32,6 +32,8 @@ using namespace std;
 "."   { yylval.sym = yytext[0]; return DOT; }
 ","   { yylval.sym = yytext[0]; return COMMA; }
 
+"="   { yylval.sym = yytext[0]; return ASSIGN; }
+
 
 [a-zA-Z]+[a-zA-A0-9]* { 
   yylval.str = new std::string(&yytext[0],yyleng); 
