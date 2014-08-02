@@ -2,9 +2,10 @@
 #define ANVIL_NODES_HPP
 
 #include "operators.hpp"
-#include "Expression.hpp"
+#include "expressions.hpp"
 
 #include <string>
+#include <list>
 
 namespace anvil{
 
@@ -31,6 +32,32 @@ namespace anvil{
     }
 
   };
+
+  class StatementList : public Node
+  {
+  protected:
+      std::list<Statement *> m_statements;
+  public:
+
+      typedef std::list<Statement *>::iterator iterator;
+      
+      iterator begin(){
+          return m_statements.begin();
+      }
+
+      iterator end(){
+          return m_statements.end();
+      }
+
+      void push_front(Statement * stmt){
+          m_statements.insert(m_statements.begin(),stmt);
+      }
+
+      std::string print(){
+          return "statement list";
+      }
+  };
+
 
   class Expression : public Statement
   {

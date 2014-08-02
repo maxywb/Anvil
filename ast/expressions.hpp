@@ -1,8 +1,8 @@
 #ifndef ANVIL_EXPRESSION_HPP
 #define ANVIL_EXPRESSION_HPP
 
-#include "Node.hpp"
-#include "Statement.hpp"
+#include "ast.hpp"
+#include "statements.hpp"
 
 #include <string>
 #include <sstream>

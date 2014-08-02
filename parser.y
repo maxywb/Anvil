@@ -1,19 +1,19 @@
 %{
 #define YYDEBUG 1
+
+  /*
+   * have to include AllNodes.hpp first otherwise compile errors
+   */
+#include "ast/ast.hpp"
+
+#include FLEX_FILE   
+
 #include <iostream>
 #include <string>
 #include <map>
 #include <cstdlib>
 #include <cstdio>
 #include <list>
-
-  /*
-   * have to include Nodes.hpp first otherwise compile errors
-   */
-#include "Node/AllNodes.hpp"
-#include "Node/operators.hpp"
-#include FLEX_FILE
-
 
   extern FILE * yyin;
   int yylex(); 
@@ -31,6 +31,7 @@
 %union {
   anvil::Expression * expr;
   anvil::Statement * stmt;
+  anvil::StatementList * statementList;
   anvil::Number * number;
   anvil::BinaryOperator * binaryOperator;
   anvil::FunctionCall * functionCall;
@@ -41,7 +42,7 @@
   double val;
   std::string * string;
 
-  std::list<std::string * > * vecString;
+  std::list<std::string * > * stringList;
 
 };
 
@@ -49,11 +50,13 @@
 //terminals
 %type <number> literal
 %type <expr> expression 
-%type <stmt> statement statement_list
+%type <stmt> statement
 %type <functionCall> function_call
 %type <assignment> assignment_statement
-%type <vecString> function_parameters
+%type <stringList> function_parameters
 %type <functionDefinition> function_definition
+%type <statementList> statement_list
+
  //tokens
 %token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN DEF
 %token <string> ID 
@@ -75,10 +78,14 @@ top : statement_list
 
 statement_list: statement statement_list
 {
-  $1->setNext($2);
+  $2->push_front($1);
+  $$ = $2;
 }
 | statement
-
+{
+    $$ = new anvil::StatementList();
+    $$->push_front($1);
+}
 statement: expression SEMI
 {
   $$ = $1;

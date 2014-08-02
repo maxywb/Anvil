@@ -1,4 +1,5 @@
-#include "Node/AllNodes.hpp"
+#include "ast/ast.hpp"
+
 #include BISON_FILE
 
 #include <iostream>
@@ -17,12 +18,13 @@ int main(int argc, char **argv)
 
   yyparse();
 
-  anvil::Statement * runner = dynamic_cast<anvil::Statement *>(root);
-  while(runner){
-    std::cout << ":";
-    std::cout << runner->print();
-    std::cout << std::endl;
-    runner = runner->next();
+  anvil::StatementList * stmtList = dynamic_cast<anvil::StatementList *>(root);
+  for(anvil::StatementList::iterator itr = stmtList->begin();
+      itr != stmtList->end();
+      itr++){
+      std::cout << ":";
+      std::cout << (*itr)->print();
+      std::cout << std::endl;
   }
 
   return 0;

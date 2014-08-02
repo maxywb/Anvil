@@ -1,8 +1,8 @@
 #ifndef ANVIL_FUNCTION_HPP
 #define ANVIL_FUNCTION_HPP
 
-#include "Node.hpp"
-#include "Statement.hpp"
+#include "node.hpp"
+#include "statements.hpp"
 
 #include <string>
 #include <sstream>
@@ -18,12 +18,12 @@ namespace anvil{
     std::string * m_name;
     std::list<std::string *> * m_parameters;
 
-    Statement * m_bodyStart;
+    StatementList * m_body;
 
   public:
     FunctionDefinition(std::string * name, std::list<std::string *> * params, 
-		       Statement * bodyStart) 
-      : m_name(name), m_parameters(params), m_bodyStart(bodyStart){}
+		       StatementList * body) 
+        : m_name(name), m_parameters(params), m_body(body){}
 
     std::string print(){
       std::ostringstream strs;
@@ -39,12 +39,12 @@ namespace anvil{
       }
       strs << ")";
       strs << std::endl << "{" << std::endl;
-      anvil::Statement * runner = m_bodyStart;
-      while(runner){
+      for(StatementList::iterator itr = m_body->begin();
+	  itr != m_body->end();
+	  itr++){
 	strs << ":";
-	strs << runner->print();
+	strs << (*itr)->print();
 	strs << std::endl;
-	runner = runner->next();
       }
       strs << "}";
 
