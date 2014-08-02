@@ -38,6 +38,10 @@
   anvil::Assignment * assignment;
   anvil::FunctionDefinition * functionDefinition;
 
+  anvil::ConditionalStatement * conditionalStatement;
+  anvil::ConditionalBranch * conditionalBranch;
+  std::list<anvil::ConditionalBranch *> * conditionalList;
+
   char sym;
   double val;
   std::string * string;
@@ -57,14 +61,21 @@
 %type <functionDefinition> function_definition
 %type <statementList> statement_list
 
+%type <conditionalBranch> if_branch
+%type <conditionalBranch> elif_branch
+%type <conditionalBranch> else_branch
+%type <conditionalList> elif_list
+
+
+
  //tokens
-%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN DEF
+%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN DEF IF ELSE ELIF
 %token <string> ID 
 %token <val> NUM
 
  //associativity
-%right DEF
-%left COMMA
+
+
 %left ADD MINUS
 %left MULTIPLY DIVIDE
 
@@ -99,11 +110,51 @@ function_definition
 {
   $$ = $1;
 }
+|
+conditional
+{
+  $$ = NULL;
+}
+
 | SEMI
 {
   $$ = NULL;
 }
 
+conditional: if_branch elif_list else_branch
+{
+  std::cout << "if elif_list else" << std::endl;
+}
+| if_branch
+{
+    std::cout << "if" << std::endl;
+}
+| if_branch else_branch
+{
+    std::cout << "if else" << std::endl;
+}
+
+if_branch: IF LP expression RP LC statement_list RC
+{
+  $$ = NULL;
+}
+elif_branch: ELIF LP expression RP LC statement_list RC
+{
+  $$ = NULL;
+}
+else_branch: ELSE LC statement_list RC
+{
+  $$ = NULL;
+}
+
+elif_list: elif_branch elif_list
+{
+  $$ = NULL;
+}
+| elif_branch
+{
+  $$ = NULL;
+}
 
 expression: expression COMMA expression
 {

@@ -1,7 +1,8 @@
 #ifndef ANVIL_STATEMENT_HPP
 #define ANVIL_STATEMENT_HPP
 
-#include "Node.hpp"
+#include "ast.hpp"
+#include "node.hpp"
 
 #include <list>
 #include <string>
@@ -37,6 +38,39 @@ namespace anvil{
 
   };
 
+  class ConditionalBranch : public Statement
+  {
+  private:
+    Expression * m_condition;
+    StatementList * m_body;
+  public:
+    
+    std::string print(){
+      return "if/else";
+    }
+
+  };
+
+  class ConditionalStatement : public Statement
+  {
+  private:
+    std::list<ConditionalBranch * > m_conditionBranches; // first is the if, others are elseif
+
+  public:
+
+
+  };
+
+
+   class ForLoop : public Statement
+   {
+     
+   };
+
+  class WhileLoop : public Statement
+   {
+     
+   };
 
 }
 #endif

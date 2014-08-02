@@ -2,6 +2,8 @@ base = $(shell pwd)
 
 derived = $(base)/derived
 
+bisonFlags = -DYYDEBUG=
+
 bisonIn = parser.y
 flexIn = scanner.lex
 
@@ -9,7 +11,7 @@ bisonOut = $(derived)/parser.c
 bisonOutHeader = $(derived)/parser.h
 flexOut = $(derived)/scanner.h
 
-flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutHeader)\"
+flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutHeader)\" 
 
 executable = anvil
 

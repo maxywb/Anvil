@@ -11,6 +11,9 @@
 %%
 
 "def" { return DEF;}
+"if" { return IF;}
+"elif" { return ELIF;}
+"else" { return ELSE;}
 
 [0-9]+   { yylval.val = atoi(yytext); return NUM; }
 "+"  { yylval.sym = yytext[0]; return ADD; }
@@ -49,7 +52,7 @@
 
 
 
-
+\#.*     { }
 ";"      { return SEMI; }
 <<EOF>>  { return 0; }
 [ \t\n]+ { }
