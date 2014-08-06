@@ -60,7 +60,36 @@ namespace anvil{
     operators::BinaryOperatorType m_type;
   public:
     BinaryOperator(operators::BinaryOperatorType type, Expression * left, Expression * right)
-      : m_type(type),m_left(left), m_right(right) {}
+      : m_type(type),m_left(left), m_right(right) 
+    {
+#ifndef NDEBUG
+      // assert on unspported operator type
+      switch(type){
+      case operators::Add:
+      case operators::Multiply:
+	break;
+      case operators::Subtract:
+      case operators::Divide:
+      case operators::Modulo:
+      case operators::GreaterThan:
+      case operators::LessThan:
+      case operators::GreaterThanOrEqual:
+      case operators::LessThanOrEqual:
+      case operators::Equal:
+      case operators::NotEqual:
+      case operators::Xor:
+      case operators::And:
+      case operators::Or:
+      case operators::ShiftRight:
+      case operators::ShiftLeft:
+      case operators::Dot:
+      case operators::Comma:
+      default:	
+	ASSERT(false,"Unsupported binary operator type");
+	break;
+      }
+#endif
+    }
     
     std::string print(){
       std::ostringstream strs;
@@ -68,10 +97,12 @@ namespace anvil{
       strs << m_left->print();
       switch(m_type){
       case operators::Add:
+	strs << "+";
 	break;
       case operators::Subtract:
 	break;
       case operators::Multiply:
+	strs << "*";
 	break;
       case operators::Divide:
 	break;
@@ -103,12 +134,13 @@ namespace anvil{
 	break;
       case operators::Comma:
 	break;
-      default:
-	
+      default:	
+	ASSERT(false,"This shouldn't happen.");
 	break;
       }
-
       
+      strs << m_right->print();
+
       return strs.str();
     }
 

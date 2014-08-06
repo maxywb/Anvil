@@ -6,6 +6,7 @@
 
 #include <string>
 #include <list>
+#include <sstream>
 
 namespace anvil{
 
@@ -54,7 +55,16 @@ namespace anvil{
       }
 
       std::string print(){
-          return "statement list";
+	std::ostringstream strs;
+
+	for(std::list<Statement *>::iterator itr = m_statements.begin();
+	    itr != m_statements.end();
+	    itr++){
+	  strs << (*itr)->print();
+	  strs << std::endl;
+	}
+	
+	return strs.str();
       }
   };
 

@@ -1,6 +1,7 @@
 #ifndef ANVIL_STATEMENT_HPP
 #define ANVIL_STATEMENT_HPP
 
+#include "assert.hpp"
 #include "ast.hpp"
 #include "node.hpp"
 
@@ -41,15 +42,28 @@ namespace anvil{
   class ConditionalBranch : public Statement
   {
   private:
-      Expression * m_condition; // this is NULL when it's an else
+    Expression * m_condition; // this is NULL when it's an else
     StatementList * m_body;
   public:
 
-      ConditionalBranch(Expression * condition, StatementList * body) 
-          : m_condition(condition), m_body(body) {}
+    ConditionalBranch(Expression * condition, StatementList * body) 
+      : m_condition(condition), m_body(body) 
+    {
+      ASSERT(body, "can't initialize conditional with NULL body");
+    }
     
     std::string print(){
-      return "if/elif/else\n";
+      // owning ConditionalBlock knows what i am (if/elif/else)
+      std::ostringstream strs;
+      strs << "(";
+      if(m_condition){
+	strs << m_condition->print();
+      }
+      strs << ")" << std::endl;
+      strs << "{" << std::endl;
+      strs << m_body->print();
+      strs << "}" << std::endl;
+      return strs.str();
     }
 
   };
@@ -57,51 +71,53 @@ namespace anvil{
   class ConditionalBlock : public Statement
   {
   private:
-      ConditionalBranch * m_ifBranch;
-      std::list<ConditionalBranch * > * m_elifBranches;
-      ConditionalBranch * m_elseBranch;
+    ConditionalBranch * m_ifBranch;
+    std::list<ConditionalBranch * > * m_elifBranches;
+    ConditionalBranch * m_elseBranch;
 
-      ConditionalBlock() {}
+    ConditionalBlock() {}
 
   public:
-      ConditionalBlock(ConditionalBranch * ifBranch, std::list<ConditionalBranch * > * elifBranches,ConditionalBranch * elseBranch) 
-          : m_ifBranch(ifBranch), m_elifBranches(elifBranches), m_elseBranch(elseBranch) {}
+    ConditionalBlock(ConditionalBranch * ifBranch, std::list<ConditionalBranch * > * elifBranches,ConditionalBranch * elseBranch) 
+      : m_ifBranch(ifBranch), m_elifBranches(elifBranches), m_elseBranch(elseBranch) {}
 
 
     std::string print(){
       std::ostringstream strs;
 
-
+      strs << "if";
       strs << m_ifBranch->print();
 
       for(std::list<ConditionalBranch *>::iterator itr = m_elifBranches->begin();
 	  itr != m_elifBranches->end();
 	  itr++){
-          strs << (*itr)->print();
+	strs << "elif";
+	strs << (*itr)->print();
       }
 
       if(m_elseBranch){
-          strs << m_elseBranch->print();
+	strs << "else";
+	strs << m_elseBranch->print();
       }
 
       strs << std::endl;
 
-    return strs.str();
+      return strs.str();
 
     }
 
   };
 
 
-   class ForLoop : public Statement
-   {
+  class ForLoop : public Statement
+  {
      
-   };
+  };
 
   class WhileLoop : public Statement
-   {
+  {
      
-   };
+  };
 
 }
 #endif
