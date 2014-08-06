@@ -5,23 +5,24 @@ namespace anvil{
   namespace operators{
 
     enum BinaryOperatorType {
-      ADD,
-      MINUS,
-      MULTIPLY,
-      DIVIDE,
-      MODULO,
-      GT,
-      LT,
-      GT_EQ,
-      LT_EQ,
-      EQUAL,
-      NE,
-      XOR,
-      AND,
-      OR,
-      SHIFT_RIGHT,
-      SHIFT_LEFT,
-      DOT,
+      Add,
+      Subtract,
+      Multiply,
+      Divide,
+      Modulo,
+      GreaterThan,
+      LessThan,
+      GreaterThanOrEqual,
+      LessThanOrEqual,
+      Equal,
+      NotEqual,
+      Xor,
+      And,
+      Or,
+      ShiftRight,
+      ShiftLeft,
+      Dot,
+      Comma
     };
   }
 }

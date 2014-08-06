@@ -55,71 +55,12 @@ namespace anvil{
   protected:
     Expression * m_left;
     Expression * m_right;
-
+    operators::BinaryOperatorType m_type;
   public:
-    BinaryOperator(Expression * left, Expression * right)
-      : m_left(left), m_right(right) {}
+    BinaryOperator(operators::BinaryOperatorType type, Expression * left, Expression * right)
+      : m_type(type),m_left(left), m_right(right) {}
 
   };
-
-  class Comma : public BinaryOperator
-  {
-  public:
-    Comma(Expression * left, Expression * right)		   
-      : BinaryOperator(left,right) {}
-
-    std::string print(){
-      std::ostringstream strs;
-      strs << "[";
-      strs << m_left->print();
-      strs << ",";
-      strs << m_right->print();
-      strs << "]";
-      return strs.str();
-    }
-
-  };
-
-  class Addition : public BinaryOperator
-  {
-  public:
-    Addition(Expression * left, Expression * right)		   
-      : BinaryOperator(left,right) {}
-
-    std::string print(){
-      std::ostringstream strs;
-      strs << "(";
-      strs << "+";
-      strs << " ";
-      strs << m_left->print();
-      strs << ",";
-      strs << m_right->print();
-      strs << ")";
-      return strs.str();
-    }
-
-  };
-
-  class Multiplication : public BinaryOperator
-  {
-  public:
-    Multiplication(Expression * left, Expression * right)		   
-      : BinaryOperator(left,right) {}
-
-    std::string print(){
-      std::ostringstream strs;
-      strs << "(";
-      strs << "*";
-      strs << " ";
-      strs << m_left->print();
-      strs << ",";
-      strs << m_right->print();
-      strs << ")";
-      return strs.str();
-    }
-
-  };
-
 
 
 }

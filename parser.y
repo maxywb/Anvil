@@ -38,7 +38,7 @@
   anvil::Assignment * assignment;
   anvil::FunctionDefinition * functionDefinition;
 
-  anvil::ConditionalStatement * conditionalStatement;
+  anvil::ConditionalBlock * conditionalBlock;
   anvil::ConditionalBranch * conditionalBranch;
   std::list<anvil::ConditionalBranch *> * conditionalList;
 
@@ -55,6 +55,7 @@
 %type <number> literal
 %type <expr> expression 
 %type <stmt> statement
+%type <conditionalBlock> conditional
 %type <functionCall> function_call
 %type <assignment> assignment_statement
 %type <stringList> function_parameters
@@ -113,7 +114,7 @@ function_definition
 |
 conditional
 {
-  $$ = NULL;
+  $$ = $1;
 }
 
 | SEMI
@@ -123,42 +124,44 @@ conditional
 
 conditional: if_branch elif_list else_branch
 {
-  std::cout << "if elif_list else" << std::endl;
+    $$ = new anvil::ConditionalBlock($1,$2,$3);
 }
 | if_branch
 {
-    std::cout << "if" << std::endl;
+    $$ = NULL;
 }
 | if_branch else_branch
 {
-    std::cout << "if else" << std::endl;
+    $$ = NULL;
 }
 
 if_branch: IF LP expression RP LC statement_list RC
 {
-  $$ = NULL;
+    $$ = new anvil::ConditionalBranch($3,$6);
 }
 elif_branch: ELIF LP expression RP LC statement_list RC
 {
-  $$ = NULL;
+    $$ = new anvil::ConditionalBranch($3,$6);
 }
 else_branch: ELSE LC statement_list RC
 {
-  $$ = NULL;
+    $$ = new anvil::ConditionalBranch(NULL,$3);
 }
 
 elif_list: elif_branch elif_list
 {
-  $$ = NULL;
+  $$ = $2;
+  $$->push_front($1);
 }
 | elif_branch
 {
-  $$ = NULL;
+    $$ = new std::list<anvil::ConditionalBranch *>();
+    $$->push_front($1);
 }
 
 expression: expression COMMA expression
 {
-  $$ = new anvil::Comma($1,$3);
+  $$ = new anvil::BinaryOperator(anvil::operators::Comma,$1,$3);
 }
 |
 literal
@@ -167,11 +170,11 @@ literal
 }
 | expression ADD expression
 {
-  $$ = new anvil::Addition($1,$3);			   
+  $$ = new anvil::BinaryOperator(anvil::operators::Add,$1,$3);			   
 }
 | expression MULTIPLY expression
 {
-  $$ = new anvil::Multiplication($1,$3);
+  $$ = new anvil::BinaryOperator(anvil::operators::Multiply,$1,$3);
 
 }
 | LP expression RP
