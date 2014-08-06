@@ -67,6 +67,7 @@ namespace anvil{
       switch(type){
       case operators::Add:
       case operators::Multiply:
+      case operators::Comma:
 	break;
       case operators::Subtract:
       case operators::Divide:
@@ -83,7 +84,6 @@ namespace anvil{
       case operators::ShiftRight:
       case operators::ShiftLeft:
       case operators::Dot:
-      case operators::Comma:
       default:	
 	ASSERT(false,"Unsupported binary operator type");
 	break;
@@ -133,6 +133,7 @@ namespace anvil{
       case operators::Dot:
 	break;
       case operators::Comma:
+	strs << ",";
 	break;
       default:	
 	ASSERT(false,"This shouldn't happen.");
