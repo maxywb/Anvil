@@ -15,7 +15,14 @@
 "elif" { return ELIF;}
 "else" { return ELSE;}
 
+"for" { return FOR;}
+"while" { return WHILE;}
+
+"break" { return BREAK;}
+"return" { return RETURN;}
+
 [0-9]+   { yylval.val = atoi(yytext); return NUM; }
+[0-9]+\.[0-9]   { yylval.val = atof(yytext); return NUM; }
 "+"  { yylval.sym = yytext[0]; return ADD; }
 "-"   { yylval.sym = yytext[0]; return MINUS; }
 "*"   { yylval.sym = yytext[0]; return MULTIPLY; }
@@ -49,6 +56,8 @@
 ")"      { return RP; }
 "{"      { return LC; }
 "}"      { return RC; }
+"["      { return LS; }
+"]"      { return RS; }
 
 
 

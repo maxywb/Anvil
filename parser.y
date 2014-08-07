@@ -42,6 +42,9 @@
   anvil::ConditionalBranch * conditionalBranch;
   std::list<anvil::ConditionalBranch *> * conditionalList;
 
+  anvil::ForLoop * forLoop;
+  anvil::WhileLoop * whileLoop;
+
   char sym;
   double val;
   std::string * string;
@@ -57,7 +60,7 @@
 %type <stmt> statement
 %type <conditionalBlock> conditional
 %type <functionCall> function_call
-%type <assignment> assignment_statement
+%type <assignment> assignment
 %type <stringList> function_parameters
 %type <functionDefinition> function_definition
 %type <statementList> statement_list
@@ -67,19 +70,23 @@
 %type <conditionalBranch> else_branch
 %type <conditionalList> elif_list
 
+%type <stmt> loop
+%type <forLoop> for_loop
+%type <whileLoop> while_loop
 
-
- //tokens
-%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN DEF IF ELSE ELIF
+//non-terminals
+%token <sym>  ADD MINUS MULTIPLY DIVIDE MODULO GT LT GT_EQ LT_EQ EQUAL NE XOR OR AND SHIFT_RIGHT
+%token <sym>  SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN DEF IF ELSE ELIF FOR WHILE BREAK RETURN
+%token <sym>  LS RS 
 %token <string> ID 
 %token <val> NUM
 
  //associativity
 
 
-%left ADD MINUS
-%left MULTIPLY DIVIDE
-
+%left ADD MINUS LT
+%left MULTIPLY DIVIDE 
+%left COMMA
 %%
 
 top : statement_list
@@ -102,10 +109,6 @@ statement: expression SEMI
 {
   $$ = $1;
 }
-| assignment_statement SEMI
-{
-  $$ = $1;
-}
 |
 function_definition
 {
@@ -116,7 +119,11 @@ conditional
 {
   $$ = $1;
 }
-
+|
+loop
+{
+  $$ = $1;
+}
 | SEMI
 {
   $$ = NULL;
@@ -175,7 +182,10 @@ literal
 | expression MULTIPLY expression
 {
   $$ = new anvil::BinaryOperator(anvil::operators::Multiply,$1,$3);
-
+}
+| expression LT expression
+{
+  $$ = new anvil::BinaryOperator(anvil::operators::LessThan,$1,$3);
 }
 | LP expression RP
 {
@@ -185,7 +195,11 @@ literal
 {
   $$ = $1;
 }
-
+|
+assignment
+{
+  $$ = $1;
+}
 literal: NUM
 {
   $$ = new anvil::Number(static_cast<double>($1));
@@ -202,7 +216,7 @@ ID LP expression RP
   $$ = new anvil::FunctionCall(*$1,$3);
 }
 
-assignment_statement: ID ASSIGN expression
+assignment: ID ASSIGN expression
 {
   $$ = new anvil::Assignment($1,$3);
 }
@@ -223,4 +237,23 @@ function_parameters: ID COMMA function_parameters
   $$->insert($$->begin(),$1);
 }
 
+loop: for_loop
+{
+  $$ = $1;
+}
+|
+while_loop
+{
+  $$ = $1;
+}
+
+for_loop: FOR LP expression SEMI expression SEMI expression RP LC statement_list RC
+{
+  $$ = new anvil::ForLoop($3,$5,$7,$10);
+}
+
+while_loop: WHILE LP expression RP LC statement_list RC
+{
+  $$ = new anvil::WhileLoop($3,$6);
+}
 %%

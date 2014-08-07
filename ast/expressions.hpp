@@ -68,12 +68,12 @@ namespace anvil{
       case operators::Add:
       case operators::Multiply:
       case operators::Comma:
+      case operators::LessThan:
 	break;
       case operators::Subtract:
       case operators::Divide:
       case operators::Modulo:
       case operators::GreaterThan:
-      case operators::LessThan:
       case operators::GreaterThanOrEqual:
       case operators::LessThanOrEqual:
       case operators::Equal:
@@ -111,6 +111,7 @@ namespace anvil{
       case operators::GreaterThan:
 	break;
       case operators::LessThan:
+	strs << "<";
 	break;
       case operators::GreaterThanOrEqual:
 	break;
@@ -146,6 +147,29 @@ namespace anvil{
     }
 
   };
+
+  class Assignment : public Expression
+  {
+  private:
+    std::string m_name;
+    Expression * m_rhs;
+  public:
+    Assignment(std::string *name, Expression * rhs) 
+      : m_name(*name),m_rhs(rhs) {}
+
+    std::string print(){
+      std::ostringstream strs;
+
+      strs << m_name;
+      strs << "=";
+      strs << m_rhs->print();
+
+      return strs.str();
+    }
+
+  };
+
+
 
 
 }

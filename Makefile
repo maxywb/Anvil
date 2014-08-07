@@ -2,7 +2,7 @@ base = $(shell pwd)
 
 derived = $(base)/derived
 
-bisonFlags = -DYYDEBUG=
+bisonFlags = -t --graph -v
 
 bisonIn = parser.y
 flexIn = scanner.lex
@@ -20,10 +20,10 @@ includes = -I$(base) -I$(base)/Node
 default:
 	@echo $(base)
 	mkdir -p derived
-	bison -d $(bisonIn) -o $(bisonOut) 
+	bison -d $(bisonIn) -o $(bisonOut) $(bisonFlags)
 	flex --outfile=$(flexOut) $(flexIn)
 
-	g++ -o $(executable) main.cpp $(bisonOut) $(flexBisonDefines) $(includes)
+	g++ -o $(executable) main.cpp $(bisonOut) $(flexBisonDefines) $(includes) 
 
 clean:
 	@rm -r $(derived)
@@ -31,3 +31,6 @@ clean:
 
 run: default
 	./anvil test.avl	
+
+dot: default
+	dot -o /mnt/raid/anvil.svg derived/parser.dot -Tsvg
