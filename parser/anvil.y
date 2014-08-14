@@ -5,7 +5,7 @@
    * have to include AllNodes.hpp first otherwise compile errors
    */
 #include "ast/ast.hpp"
-
+#include "Parser.hpp"
 #include FLEX_FILE   
 
 #include <iostream>
@@ -19,7 +19,7 @@
   int yylex(); 
   int yyerror(const char *p) { std::cerr << p << " Error!" << std::endl; }
 
-  anvil::Node * root;
+  anvil::Node * s_root;
 
 %}
 
@@ -91,7 +91,7 @@
 
 top : statement_list
 {
-  root = $1;
+  s_root = $1;
 }
 
 
@@ -199,6 +199,10 @@ literal
 assignment
 {
   $$ = $1;
+}
+| ID
+{
+  $$ = new anvil::Id($1);
 }
 literal: NUM
 {

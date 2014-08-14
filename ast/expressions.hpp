@@ -52,6 +52,23 @@ namespace anvil{
 
   };
 
+  class Id : public Expression
+  {
+  private:
+    std::string m_id;
+
+  public:
+    Id(std::string * id) 
+      :  m_id(*id) {}
+    
+    std::string print(){
+      std::ostringstream strs;
+      strs << m_id;
+      return strs.str();
+    }
+  };
+
+
   class BinaryOperator : public Expression
   {
   protected:

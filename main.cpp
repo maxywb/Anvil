@@ -1,23 +1,22 @@
 #include "ast/ast.hpp"
+#include "parser/Parser.hpp"
 
-#include BISON_FILE
 
 #include <iostream>
 
 #include <stdio.h>
 
-extern int yyparse();
-extern FILE * yyin;
-extern anvil::Node * root;
 
 
 
 int main(int argc, char **argv)
 {
-  FILE * fp = fopen(argv[1],"r");
-  yyin = fp;
 
-  yyparse();
+  anvil::Parser parser;
+  parser.setFile(argv[1]);
+  parser.parse();
+
+  anvil::Node * root = parser.getTreeRoot();
 
   anvil::StatementList * stmtList = dynamic_cast<anvil::StatementList *>(root);
   for(anvil::StatementList::iterator itr = stmtList->begin();

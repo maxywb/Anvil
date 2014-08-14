@@ -4,8 +4,10 @@ derived = $(base)/derived
 
 bisonFlags = -t --graph -v
 
-bisonIn = parser.y
-flexIn = scanner.lex
+bisonIn = parser/anvil.y
+flexIn = parser/anvil.lex
+parserIn = parser/Parser.cpp
+parserOut = $(derived)/libAvlParser.so
 
 bisonOut = $(derived)/parser.c
 bisonOutHeader = $(derived)/parser.h
@@ -15,15 +17,23 @@ flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutHeader)\"
 
 executable = anvil
 
-includes = -I$(base) -I$(base)/Node
+includes = -I$(base) -I$(base)/parser -I$(base)/ast
 
-default:
-	@echo $(base)
+links = -L$(derived) -lAvlParser
+
+
+CXX=LD_LIBRARY_PATH=LD_LIBRARY_PATH:$(derived) g++
+
+all: bison parser main.cpp 
+	$(CXX) -o anvil main.cpp $(includes) $(links) 
+
+bison:
 	mkdir -p derived
 	bison -d $(bisonIn) -o $(bisonOut) $(bisonFlags)
 	flex --outfile=$(flexOut) $(flexIn)
 
-	g++ -o $(executable) main.cpp $(bisonOut) $(flexBisonDefines) $(includes) 
+parser: bison 
+	g++ -shared -o $(parserOut) $(parserIn) $(bisonOut) $(flexBisonDefines) $(includes) 
 
 clean:
 	@rm -r $(derived)
