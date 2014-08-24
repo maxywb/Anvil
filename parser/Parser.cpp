@@ -11,7 +11,7 @@
 
 extern int yyparse();
 extern FILE * yyin;
-extern anvil::Node * s_root;
+extern anvil::StatementList * s_root;
 
 namespace anvil{
   void Parser::setFile(char * file)
@@ -28,7 +28,7 @@ namespace anvil{
       m_treeRoot = s_root;
     }
 
-  Node * Parser::getTreeRoot()
+  StatementList * Parser::getTreeRoot()
     {
       return s_root;
     }

@@ -32,6 +32,6 @@ int main(int argc, char **argv)
   }
 
   treeWalker.visit(root);
-  treeWalker.printTerms();
+
   return 0;
 }

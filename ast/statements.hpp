@@ -39,6 +39,11 @@ namespace anvil{
       return strs.str();
     }
 
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
   };
 
   class ConditionalBlock : public Statement
@@ -77,6 +82,11 @@ namespace anvil{
 
       return strs.str();
 
+    }
+
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
     }
 
   };

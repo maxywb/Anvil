@@ -4,6 +4,7 @@
 #include "assert.hpp"
 #include "ast.hpp"
 #include "statements.hpp"
+#include "visitor/TreeWalker.hpp"
 
 #include <string>
 #include <sstream>
@@ -32,6 +33,11 @@ namespace anvil{
       return strs.str();
     }
 
+    virtual void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
   };
 
   class Number : public Expression
@@ -49,6 +55,10 @@ namespace anvil{
       return strs.str();
     }
 
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
 
   };
 
@@ -66,6 +76,11 @@ namespace anvil{
       strs << m_id;
       return strs.str();
     }
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
   };
 
 
@@ -76,8 +91,16 @@ namespace anvil{
     Expression * m_right;
     operators::BinaryOperatorType m_type;
   public:
+    Expression * getLeft() 
+    {
+      return m_left;
+    }
+    Expression * getRight() 
+    {
+      return m_right;
+    }
     BinaryOperator(operators::BinaryOperatorType type, Expression * left, Expression * right)
-      : m_type(type),m_left(left), m_right(right) 
+      : m_left(left), m_right(right),m_type(type)
     {
 #ifndef NDEBUG
       // assert on unspported operator type
@@ -163,6 +186,18 @@ namespace anvil{
       return strs.str();
     }
 
+    operators::BinaryOperatorType getType()
+    {
+      return m_type;
+    }
+
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+  
+
+
   };
 
   class Assignment : public Expression
@@ -182,6 +217,10 @@ namespace anvil{
       strs << m_rhs->print();
 
       return strs.str();
+    }
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
     }
 
   };

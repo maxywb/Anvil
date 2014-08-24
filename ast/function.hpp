@@ -51,6 +51,10 @@ namespace anvil{
     return strs.str();
   }
 
+      void visit(TreeWalker * walker)
+      {
+          walker->visit(this);
+      }
 };
 
 

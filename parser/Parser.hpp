@@ -12,20 +12,20 @@
 
 extern int yyparse();
 extern FILE * yyin;
-extern anvil::Node * s_root;
+extern anvil::StatementList * s_root;
 
 namespace anvil{
   class Parser 
   {
   private:
-    Node  * m_treeRoot;
+    StatementList  * m_treeRoot;
     
   public:
     void setFile(char * file);
 
     void parse();
 
-    Node * getTreeRoot();
+    StatementList * getTreeRoot();
 
   };
 

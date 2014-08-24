@@ -33,6 +33,12 @@ namespace anvil{
 
     }
 
+      void visit(TreeWalker * walker)
+      {
+          walker->visit(this);
+      }
+
+
   };
 
   class WhileLoop : public Statement
@@ -50,6 +56,12 @@ namespace anvil{
       return "while loop";
 
     }
+
+    void visit(TreeWalker * walker)
+      {
+          walker->visit(this);
+      }
+
      
   };
 

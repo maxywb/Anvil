@@ -3,6 +3,7 @@
 
 #include "operators.hpp"
 #include "expressions.hpp"
+#include "visitor/TreeWalker.hpp"
 
 #include <string>
 #include <list>
@@ -10,17 +11,8 @@
 
 namespace anvil{
 
-  class Node 
-  {
-  public:
-    virtual std::string print(){
-      return "node";
-    }
 
-    Node(){}
-  };
-
-  class Statement : public Node
+  class Statement 
   {
   protected:
     Statement * m_next;
@@ -32,40 +24,55 @@ namespace anvil{
       return m_next;
     }
 
+    virtual void visit(TreeWalker * walker) =0;
+
+    virtual std::string print()=0;
+
+
+
+
+
   };
 
-  class StatementList : public Node
+  class StatementList
   {
   protected:
-      std::list<Statement *> m_statements;
+    std::list<Statement *> m_statements;
   public:
 
-      typedef std::list<Statement *>::iterator iterator;
+    typedef std::list<Statement *>::iterator iterator;
       
-      iterator begin(){
-          return m_statements.begin();
+    iterator begin(){
+      return m_statements.begin();
+    }
+
+    iterator end(){
+      return m_statements.end();
+    }
+
+    void push_front(Statement * stmt){
+      m_statements.insert(m_statements.begin(),stmt);
+    }
+
+    std::string print(){
+      std::ostringstream strs;
+      strs << "sl: ";
+      for(std::list<Statement *>::iterator itr = m_statements.begin();
+	  itr != m_statements.end();
+	  itr++){
+	strs << (*itr)->print();
+	strs << std::endl;
       }
-
-      iterator end(){
-          return m_statements.end();
-      }
-
-      void push_front(Statement * stmt){
-          m_statements.insert(m_statements.begin(),stmt);
-      }
-
-      std::string print(){
-	std::ostringstream strs;
-
-	for(std::list<Statement *>::iterator itr = m_statements.begin();
-	    itr != m_statements.end();
-	    itr++){
-	  strs << (*itr)->print();
-	  strs << std::endl;
-	}
 	
-	return strs.str();
-      }
+      return strs.str();
+    }
+
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
+
   };
 
 
@@ -78,10 +85,14 @@ namespace anvil{
     std::string print(){
       return "expr";
     }
-    Expression() {}
+
     void setParent(Expression * parent) {
       m_parent = parent;
     }
+
+    virtual void visit(TreeWalker * walker) =0;
+
+
   };
 
 }

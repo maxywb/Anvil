@@ -19,7 +19,7 @@
   int yylex(); 
   int yyerror(const char *p) { std::cerr << p << " Error!" << std::endl; }
 
-  anvil::Node * s_root;
+  anvil::StatementList * s_root;
 
 %}
 
@@ -102,8 +102,8 @@ statement_list: statement statement_list
 }
 | statement
 {
-    $$ = new anvil::StatementList();
-    $$->push_front($1);
+  $$ = new anvil::StatementList();
+  $$->push_front($1);
 }
 statement: expression SEMI
 {
