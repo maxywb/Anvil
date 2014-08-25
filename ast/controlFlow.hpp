@@ -33,11 +33,31 @@ namespace anvil{
 
     }
 
-      void visit(TreeWalker * walker)
-      {
-          walker->visit(this);
-      }
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
 
+
+    Expression * getInitial()
+    {
+      return m_initial;
+    }
+
+    Expression * getCondition()
+    {
+      return m_condition;
+    }
+
+    Expression * getCounter()
+    {
+      return m_counter;
+    }
+
+    StatementList * getBody()
+    {
+      return m_body;
+    }
 
   };
 
@@ -58,9 +78,9 @@ namespace anvil{
     }
 
     void visit(TreeWalker * walker)
-      {
-          walker->visit(this);
-      }
+    {
+      walker->visit(this);
+    }
 
      
   };

@@ -32,7 +32,7 @@ CXX=LD_LIBRARY_PATH=LD_LIBRARY_PATH:$(derived) g++
 all: bison parser visitor ir main.cpp 
 	$(CXX) $(CXX_FLAGS) -o anvil main.cpp $(includes) $(links) 
 
-bison:
+bison: 
 	mkdir -p derived
 	bison -d $(bisonIn) -o $(bisonOut) $(bisonFlags)
 	flex --outfile=$(flexOut) $(flexIn)

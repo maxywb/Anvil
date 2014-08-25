@@ -32,6 +32,9 @@ int main(int argc, char **argv)
   }
 
   treeWalker.visit(root);
+
+  std::cout << std::endl;
+
   treeWalker.printTerms();
   return 0;
 }

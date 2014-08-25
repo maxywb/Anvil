@@ -1,5 +1,7 @@
-#ifndef ANVIL_OPERATORS_HPP
-#define ANVIL_OPERATORS_HPP
+#ifndef ANVIL_AST_OPERATORS_HPP
+#define ANVIL_AST_OPERATORS_HPP
+
+#include <ostream>
 
 namespace anvil{ 
   namespace operators{
@@ -24,7 +26,12 @@ namespace anvil{
       Dot,
       Comma
     };
+
   }
+
+
+
+
 }
 
 

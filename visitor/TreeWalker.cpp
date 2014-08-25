@@ -24,11 +24,18 @@ namespace anvil{
 
   }
 
-  void TreeWalker::visit(Statement * node)
+  void TreeWalker::visit(Assignment * node)
   {
-    std::cout << "visiting statement: " << node->print() << std::endl;
-    node->visit(this);
+    std::cout << "assignment" << std::endl;
+    
+    node->getRHS()->visit(this);
+
+    std::string endValue = m_symbolTable.addOrUpdateName(node->getName());
+
+    addTerm("add",{endValue,"$zero",getCurrentResult()});
+
   }
+
 
   void TreeWalker::visit(BinaryOperator * node)
   {
@@ -59,8 +66,11 @@ namespace anvil{
       operation = "multiply";
       break;
 
-    case operators::Comma:
     case operators::LessThan:
+      operation = "less_than";
+      break;
+    case operators::Comma:
+
     case operators::Subtract:
     case operators::Divide:
     case operators::Modulo:
@@ -76,7 +86,7 @@ namespace anvil{
     case operators::ShiftLeft:
     case operators::Dot:
     default:	
-      ASSERT(false,"tree walker: Unsupported binary operator type");
+      ASSERT(false,"tree walker: Unsupported binary operator type:" << expressionType);
       break;
     }
 
@@ -89,6 +99,20 @@ namespace anvil{
 
   }
 
+  void TreeWalker::visit(Id * node)
+  {
+    std::cout << "visit id" << std::endl;
+
+    std::string myTemp = m_symbolTable.getName(node->getId());
+
+    addTerm("add",{myTemp,"$zero",myTemp});
+  }
+
+  void TreeWalker::visit(Statement * node)
+  {
+    node->visit(this);
+  }
+
 
   void TreeWalker::visit(StatementList * node)
   {
@@ -99,24 +123,54 @@ namespace anvil{
     }
   }
 
-
-
   void TreeWalker::visit(Number * node)
   {
     std::cout << "visit number" << std::endl;
-     m_terms.push_back(
-		     std::shared_ptr<Term>(
-					   new Term(
-						    "add",{m_symbolTable.getUniqueName(),"0x0",node->print()}
- 						    )
-					   )
-		     );
+    addTerm("add",{m_symbolTable.getUniqueName(),"0x0",node->print()});
 
   }
   void TreeWalker::visit(ForLoop * node)
   {
+    std::cout << "for loop" << std::endl;
+
+    std::cout << "setup" << std::endl;
+
+    Expression * initial = node->getInitial();
+    Expression * condition = node->getCondition();
+    Expression * counter = node->getCounter();
+    
+    std::string startLabel = m_symbolTable.getUniqueName();
+    std::string endLabel = m_symbolTable.getUniqueName();
+    
+    std::cout << "initial" << std::endl;
+
+    initial->visit(this);
+    std::string initialResult = getCurrentResult();
+
+    addTerm("label",{startLabel});
+
+    std::cout << "condition" << std::endl;
+    condition->visit(this);
+    std::string conditionalResult = getCurrentResult();
+
+    addTerm("jump_eq",{"$zero",conditionalResult,endLabel});
+    
+    std::cout << "counter" << std::endl;
+    counter->visit(this);
+    std::string counterResult = getCurrentResult();
+
+    addTerm("add",{initialResult,"$zero",counterResult});
+
+    node->getBody()->visit(this);
+
+    addTerm("jump",{startLabel});
+
+    addTerm("label",{endLabel});
+
+
 
   }
+
   void TreeWalker::visit(FunctionDefinition * node)
   {
 

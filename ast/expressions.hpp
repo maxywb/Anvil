@@ -71,11 +71,15 @@ namespace anvil{
     Id(std::string * id) 
       :  m_id(*id) {}
     
-    std::string print(){
-      std::ostringstream strs;
-      strs << m_id;
-      return strs.str();
+    std::string getId()
+    {
+      return m_id;
     }
+
+    std::string print(){
+      return getId();
+    }
+
     void visit(TreeWalker * walker)
     {
       walker->visit(this);
@@ -221,6 +225,16 @@ namespace anvil{
     void visit(TreeWalker * walker)
     {
       walker->visit(this);
+    }
+
+    Expression * getRHS()
+    {
+      return m_rhs;
+    }
+
+    std::string getName()
+    {
+      return m_name;
     }
 
   };

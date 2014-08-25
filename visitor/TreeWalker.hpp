@@ -9,11 +9,13 @@
 
 #include <memory>
 #include <list>
+#include <string>
 
 namespace anvil
 {
 
 
+  class Assignment;
   class BinaryOperator;
   class Number;
   class ConditionalBlock;
@@ -21,9 +23,10 @@ namespace anvil
   class Expression;
   class ForLoop;
   class FunctionDefinition;
-  class Statement;
   class StatementList;
+  class Statement;
   class WhileLoop;
+  class Id;
 
 
   class TreeWalker
@@ -36,15 +39,22 @@ namespace anvil
     // get 1st operand of most recently added Term
     std::string getCurrentResult()
     {
+      ASSERT(m_terms.size() > 0, "no terms to get result from");
       std::shared_ptr<Term> currentTerm = m_terms.back();
       return currentTerm->getFirstArgument();
       
+    }
+    
+    void addTerm(std::string operation, std::list<std::string> operands)
+    {
+      m_terms.push_back(std::shared_ptr<Term>(new Term(operation,operands)));
     }
 
   public:
     
     
-
+    void visit(Id * node);
+    void visit(Assignment * node);
     void visit(BinaryOperator * node);
     void visit(Number * node);
     void visit(ConditionalBlock* node);
