@@ -1,6 +1,7 @@
 #include "ast/ast.hpp"
 #include "parser/Parser.hpp"
 #include "visitor/TreeWalker.hpp"
+#include "executor/Executor.hpp"
 
 #include <iostream>
 
@@ -33,8 +34,8 @@ int main(int argc, char **argv)
 
   treeWalker.visit(root);
 
-  std::cout << std::endl;
+  anvil::Executor executor(treeWalker.getTerms());
+  executor.execute();
 
-  treeWalker.printTerms();
   return 0;
 }

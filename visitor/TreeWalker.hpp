@@ -15,69 +15,75 @@ namespace anvil
 {
 
 
-  class Assignment;
-  class BinaryOperator;
-  class Number;
-  class ConditionalBlock;
-  class ConditionalBranch;
-  class Expression;
-  class ForLoop;
-  class FunctionDefinition;
-  class StatementList;
-  class Statement;
-  class WhileLoop;
-  class Id;
+    class Assignment;
+    class BinaryOperator;
+    class Number;
+    class ConditionalBlock;
+    class ConditionalBranch;
+    class Expression;
+    class ForLoop;
+    class FunctionDefinition;
+    class StatementList;
+    class Statement;
+    class WhileLoop;
+    class Id;
 
 
-  class TreeWalker
-  {
-  private:
-
-    std::list<std::shared_ptr<Term> > m_terms;
-    SymbolTable m_symbolTable;
-
-    // get 1st operand of most recently added Term
-    std::string getCurrentResult()
+    class TreeWalker
     {
-      ASSERT(m_terms.size() > 0, "no terms to get result from");
-      std::shared_ptr<Term> currentTerm = m_terms.back();
-      return currentTerm->getFirstArgument();
+      private:
+
+        std::list<std::shared_ptr<Term> > m_terms;
+        SymbolTable m_symbolTable;
+
+        // get 1st operand of most recently added Term
+        std::string getCurrentResult()
+        {
+            ASSERT(m_terms.size() > 0, "no terms to get result from");
+            std::shared_ptr<Term> currentTerm = m_terms.back();
+            return currentTerm->getFirstArgument();
       
-    }
+        }
     
-    void addTerm(std::string operation, std::list<std::string> operands)
-    {
-      m_terms.push_back(std::shared_ptr<Term>(new Term(operation,operands)));
-    }
+        void addTerm(operations::TermOperation operation, std::vector<std::string> operands)
+        {
+            m_terms.push_back(std::shared_ptr<Term>(new Term(operation,operands)));
+        }
 
-  public:
+      public:
     
     
-    void visit(Id * node);
-    void visit(Assignment * node);
-    void visit(BinaryOperator * node);
-    void visit(Number * node);
-    void visit(ConditionalBlock* node);
-    void visit(ConditionalBranch* node);
-    void visit(Expression * node);
-    void visit(ForLoop * node);
-    void visit(FunctionDefinition * node);
-    void visit(Statement * node);
-    void visit(StatementList * node);
-    void visit(WhileLoop* node);
+        void visit(Id * node);
+        void visit(Assignment * node);
+        void visit(BinaryOperator * node);
+        void visit(Number * node);
+        void visit(ConditionalBlock* node);
+        void visit(ConditionalBranch* node);
+        void visit(Expression * node);
+        void visit(ForLoop * node);
+        void visit(FunctionDefinition * node);
+        void visit(Statement * node);
+        void visit(StatementList * node);
+        void visit(WhileLoop* node);
 
 
-    void printTerms()
-    {
-      for(auto itr = m_terms.begin();
-	itr != m_terms.end();
-	itr++) {
-	std::cout << (*itr)->print() << std::endl;
-    }
+        void printTerms()
+        {
+            for(auto itr = m_terms.begin();
+                itr != m_terms.end();
+                itr++) {
+                std::cout << (*itr)->print() << std::endl;
+            }
 
-    }
+      
+
+        }
+
+        std::list<std::shared_ptr<Term>> getTerms(){
+            return m_terms;
+        }
 
     
-  };
+    };
 }
 #endif

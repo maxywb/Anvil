@@ -11,9 +11,11 @@
 
 #include "assert.hpp"
 
+
+
 #include <iostream>
 #include <memory>
-#include <list>
+#include <vector>
 
 namespace anvil{
 
@@ -32,11 +34,11 @@ namespace anvil{
 
     std::string endValue = m_symbolTable.addOrUpdateName(node->getName());
 
-    addTerm("add",{endValue,"$zero",getCurrentResult()});
+    addTerm(operations::Add,{endValue,"$zero",getCurrentResult()});
 
   }
 
-
+    
   void TreeWalker::visit(BinaryOperator * node)
   {
     node->getRight()->visit(this);
@@ -49,8 +51,8 @@ namespace anvil{
     
     operators::BinaryOperatorType expressionType = node->getType();
 
-    std::string operation;
-    std::list<std::string> operands = {m_symbolTable.getUniqueName(),leftResult, rightResult};
+    operations::TermOperation operation;
+    std::vector<std::string> operands = {m_symbolTable.getUniqueName(),leftResult, rightResult};
     
     
 
@@ -58,16 +60,16 @@ namespace anvil{
     case operators::Add:
       std::cout << "visit add" << std::endl;
     
-      operation = "add";
+      operation = operations::Add;
 
       break;
     case operators::Multiply:
       std::cout << "visit mult" << std::endl;
-      operation = "multiply";
+      operation = operations::Multiply;
       break;
 
     case operators::LessThan:
-      operation = "less_than";
+      operation = operations::LessThan;
       break;
     case operators::Comma:
 
@@ -105,7 +107,7 @@ namespace anvil{
 
     std::string myTemp = m_symbolTable.getName(node->getId());
 
-    addTerm("add",{myTemp,"$zero",myTemp});
+    addTerm(operations::Add,{myTemp,"$zero",myTemp});
   }
 
   void TreeWalker::visit(Statement * node)
@@ -126,7 +128,7 @@ namespace anvil{
   void TreeWalker::visit(Number * node)
   {
     std::cout << "visit number" << std::endl;
-    addTerm("add",{m_symbolTable.getUniqueName(),"0x0",node->print()});
+    addTerm(operations::Add,{m_symbolTable.getUniqueName(),"0x0",node->print()});
 
   }
   void TreeWalker::visit(ForLoop * node)
@@ -147,25 +149,25 @@ namespace anvil{
     initial->visit(this);
     std::string initialResult = getCurrentResult();
 
-    addTerm("label",{startLabel});
+    addTerm(operations::Label,{startLabel});
 
     std::cout << "condition" << std::endl;
     condition->visit(this);
     std::string conditionalResult = getCurrentResult();
 
-    addTerm("jump_eq",{"$zero",conditionalResult,endLabel});
+    addTerm(operations::JumpIfEqual,{"$zero",conditionalResult,endLabel});
     
     std::cout << "counter" << std::endl;
     counter->visit(this);
     std::string counterResult = getCurrentResult();
 
-    addTerm("add",{initialResult,"$zero",counterResult});
+    addTerm(operations::Jump,{initialResult,"$zero",counterResult});
 
     node->getBody()->visit(this);
 
-    addTerm("jump",{startLabel});
+    addTerm(operations::Jump,{startLabel});
 
-    addTerm("label",{endLabel});
+    addTerm(operations::Label,{endLabel});
 
 
 
