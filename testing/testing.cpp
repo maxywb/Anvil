@@ -1,3 +1,4 @@
+#define GET_POINTER 1
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/JIT.h"
@@ -11,24 +12,41 @@
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/Support/raw_ostream.h"
 
+#include <iostream>
+#include <memory>
 #include <vector>
+
+/*
+int32 function foo(length) {
+  x = malloc(length*sizeof(int32));
+  x[0] = 2;
+  i = 0;
+  for(; i < 10; i++) {
+    x = x * 2;
+  }
+  return x;
+}
+*/
+
+#define LlvmInt32(builder, value) (builder.getInt32(value))
+
+#define FunctionInputTerminator ((llvm::Type *)0)
 
 int main() {
   
     llvm::InitializeNativeTarget();
 
     llvm::LLVMContext context;
-    // Create some module to put our function into it.
+    llvm::Type * int32Type = llvm::Type::getInt32Ty(context);
+
+    // make a module to hold the function
     std::unique_ptr<llvm::Module> module = llvm::make_unique<llvm::Module>("test", context);
-    llvm::Module *M = module.get();
 
     // setup "main" function and top level basic block
     llvm::Function *mainFunction =
-        llvm::cast<llvm::Function>(M->getOrInsertFunction("main", llvm::Type::getInt32Ty(context),
-                                                          llvm::Type::getInt32Ty(context),
-                                                          (llvm::Type *)0));
-    llvm::BasicBlock *basicBlock = llvm::BasicBlock::Create(context, "EntryBlock", mainFunction);
-    llvm::IRBuilder<> builder(basicBlock);
+        llvm::cast<llvm::Function>(module->getOrInsertFunction("main", llvm::Type::getInt32Ty(context),
+							       FunctionInputTerminator));
+    
 
     // setup malloc function
     llvm::PointerType * outputType = llvm::PointerType::get(llvm::Type::getVoidTy(context),0);
@@ -36,43 +54,73 @@ int main() {
     llvm::FunctionType *mallocType = llvm::FunctionType::get(outputType,params,false);
     llvm::Function *mallocFunction = llvm::cast<llvm::Function>(module->getOrInsertFunction("malloc",mallocType));
 
-
-    llvm::Value * two = builder.getInt32(2);
-    llvm::Value * seven = builder.getInt32(7);
     
-    llvm::CallInst * mallocResult = builder.CreateCall(mallocFunction, two);
+    // initialize builders
+    llvm::BasicBlock * setupBlock = llvm::BasicBlock::Create(context, "setup", mainFunction);
+    llvm::IRBuilder<> setup(setupBlock);
+    llvm::BasicBlock * conditionBlock = llvm::BasicBlock::Create(context, "condition", mainFunction);
+    llvm::IRBuilder<> condition(conditionBlock);
+    llvm::BasicBlock * bodyBlock = llvm::BasicBlock::Create(context, "body", mainFunction);
+    llvm::IRBuilder<> body(bodyBlock);
+    llvm::BasicBlock * postBlock = llvm::BasicBlock::Create(context, "post", mainFunction);
+    llvm::IRBuilder<> post(postBlock);
 
-    llvm::Value * ptrToInt32 = builder.CreatePointerCast(mallocResult,
-							 llvm::PointerType::get(llvm::Type::getInt32Ty(context),0),"pointerToInt32");
+    /* setup */
+    // array = int32[10]
+    llvm::CallInst * mallocResult = setup.CreateCall(mallocFunction, LlvmInt32(post,10*4));
 
-    builder.CreateStore(seven,ptrToInt32);
-    llvm::LoadInst * loadedSeven = builder.CreateLoad(ptrToInt32,"stored7");
+    llvm::Value * array = setup.CreatePointerCast(mallocResult,
+						  llvm::PointerType::get(llvm::Type::getInt32Ty(context),0),"array");
+    setup.CreateStore(LlvmInt32(setup,2), array, "array[0]=2");
 
-    llvm::Value * nine = builder.CreateAdd(loadedSeven,two);
+    // i = 1
+    llvm::AllocaInst * iLocation = setup.CreateAlloca(int32Type,0,"iStore");
+    setup.CreateStore(LlvmInt32(setup,1),iLocation,"iStore");
 
+    setup.CreateBr(conditionBlock);
 
-    builder.CreateRet(nine);
-    
-    
-    
-    /*
-{
-EntryBlock:
-  %1 = call void* @malloc(i32 7)
-  store i32 7, void* %1
-  %stored7 = load void* %1
-  add void %stored7, i32 2
-  ret void <badref>
-}
-     */
+    /* condition */
+    llvm::Value * iValue = condition.CreateLoad(iLocation,"iValue");
+    llvm::Value * conditionValue = condition.CreateSub(LlvmInt32(condition,10),iValue);
+
+    conditionValue = condition.CreateICmpNE(conditionValue,LlvmInt32(condition,0));
 
 
+    condition.CreateCondBr(conditionValue,bodyBlock,postBlock);
+
+    /* body */
+    llvm::Value * currentIndex = body.CreateShl(iValue, LlvmInt32(body,2), "currentIndex");
+    llvm::Value * currentOffset = body.CreateAdd(array, currentIndex, "currentOffset");
+
+    llvm::Value * previousIndex = body.CreateSub(iValue, LlvmInt32(body,1), "previousIndex");
+    previousIndex = body.CreateShl(previousIndex, LlvmInt32(body,2), "previousIndex");
+    llvm::Value * previousOffset = body.CreateAdd(array, previousIndex, "previousOffset");
+
+    llvm::Value * previousValue = body.CreateLoad(previousOffset, "previousValue");
+
+    llvm::Value * newValue = body.CreateShl(previousValue, LlvmInt32(body,1), "newValue");
+
+    body.CreateStore(newValue, currentOffset, "update");
+
+    // i = i + 1
+    iValue = body.CreateAdd(iValue,LlvmInt32(condition,1));
+    body.CreateStore(iValue,iLocation,"iStore");
+
+    body.CreateBr(conditionBlock);
+
+    /* post */
+    llvm::Value * retIndex = post.CreateShl(LlvmInt32(post,2), LlvmInt32(post,2), "retIndex");
+    llvm::Value * retOffset = post.CreateAdd(array, retIndex, "retOffset");
+
+    llvm::Value * returnValue = post.CreateLoad(retOffset, "return");
+
+    post.CreateRet(returnValue);
+
+    // dump asm to stdout and execute
+    llvm::outs() << *module.get();
+    llvm::outs().flush();
 
     llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(module)).create();
-
-    llvm::outs() << "We just constructed this LLVM module:\n\n" << *M;
-    llvm::outs() << "\n\nRunning foo: ";
-    llvm::outs().flush();
 
     // Call the `main' function with no arguments:
     std::vector<llvm::GenericValue> noargs;
@@ -80,6 +128,7 @@ EntryBlock:
 
     // Import result of execution:
     llvm::outs() << "Result: " << gv.IntVal << "\n";
+
     EE->freeMachineCodeForFunction(mainFunction);
 
     delete EE;
