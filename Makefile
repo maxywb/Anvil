@@ -54,7 +54,7 @@ executor: bison ir
 	g++ $(CXX_FLAGS) -shared -fPIC -o $(executorOut) executor/Executor.cpp $(includes) 
 
 testing: bison testing/testing.cpp
-	g++ -g -o  testing/testing.out testing/testing.cpp $(llvmFlags)
+	g++ -g -o  testing/testing.out testing/testing.cpp $(llvmFlags) -fpermissive
 
 
 clean:
