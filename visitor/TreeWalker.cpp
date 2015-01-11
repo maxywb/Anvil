@@ -108,13 +108,13 @@ namespace anvil{
     if (m_symbolTable.hasName(node->getName())) {
       // already exists
       std::string resultName = m_symbolTable.getName(node->getName());
-      resultLocation = m_symbolTable.getValue(resultName);
+      resultLocation = m_symbolTable.getVariable(resultName);
     } else {
       // new allocation
       std::string resultName = m_symbolTable.addName(node->getName());
       resultLocation = m_currentBuilder->CreateAlloca(getInt32Type(m_context),0,resultName);
 
-      m_symbolTable.storeValue(resultName, resultLocation);
+      m_symbolTable.storeVariable(resultName, resultLocation);
     }
 
     node->getRHS()->visit(this);
@@ -202,7 +202,7 @@ namespace anvil{
 
     std::string name = m_symbolTable.getName(node->getId());
 
-    llvm::AllocaInst * location = m_symbolTable.getValue(name);
+    llvm::AllocaInst * location = m_symbolTable.getVariable(name);
 
     llvm::Value * loadedValue = m_currentBuilder->CreateLoad(location, name);
 

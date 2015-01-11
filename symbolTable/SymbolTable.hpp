@@ -9,6 +9,10 @@
 #include <sstream>
 #include <unordered_map>
 
+namespace {
+
+}
+
 namespace anvil{
 
 
@@ -17,8 +21,8 @@ namespace anvil{
   private:
     size_t m_nameCounter;
 
-    std::unordered_map<std::string,size_t> m_symbolMap;
-    std::unordered_map<std::string, llvm::AllocaInst *> m_valueMap;
+    std::unordered_map<std::string,std::string> m_nameMap;
+    std::unordered_map<std::string, llvm::AllocaInst *> m_variableMap;
 
     size_t getUniqueNumber()
     {
@@ -32,66 +36,45 @@ namespace anvil{
     std::string getUniqueName()
     {
       std::ostringstream strs;
-      strs << "R" << getUniqueNumber();
+      strs << "R" << getUniqueNumber() << "_";
       return strs.str();
-    }
-
-
-    size_t addSymbol(std::string symbol)
-    {
-      ASSERT(m_symbolMap.count(symbol) == 0,"symbol exists: " << symbol);
-      m_symbolMap[symbol] = getUniqueNumber();
     }
 
     std::string addName(std::string symbol)
     {
-      ASSERT(m_symbolMap.count(symbol) == 0,"symbol exists: " << symbol);
-      addSymbol(symbol);
+      ASSERT(m_nameMap.count(symbol) == 0,"symbol exists: " << symbol);
+      addName(symbol);
       return getName(symbol);
     }
 
     std::string addOrUpdateName(std::string symbol)
     {
-      m_symbolMap[symbol] = getUniqueNumber();
+      m_nameMap[symbol] = getUniqueName();
       return getName(symbol);
-    }
-
-    size_t getSymbol(std::string symbol)
-    {
-      ASSERT(m_symbolMap.count(symbol) != 0,"symbol exists: " << symbol);
-      return m_symbolMap[symbol];
     }
 
     std::string getName(std::string symbol)
     {
-      ASSERT(m_symbolMap.count(symbol) != 0,"symbol exists: " << symbol);
-      std::ostringstream strs;
-      strs << "R" << m_symbolMap[symbol];
-      return strs.str();
+      ASSERT(m_nameMap.count(symbol) != 0,"symbol exists: " << symbol);
+      return m_nameMap[symbol];
     }
 
     bool hasName(std::string symbol) 
     {
-      return m_symbolMap.count(symbol) != 0;
+      return m_nameMap.count(symbol) != 0;
     }
 
-    size_t updateSymbol(std::string symbol)
-    {
-      ASSERT(m_symbolMap.count(symbol) != 0,"can't update non-existant symbol: " << symbol);
-      m_symbolMap[symbol] = getUniqueNumber();
+    void storeVariable(std::string symbol, llvm::AllocaInst * variable) {
+      m_variableMap[symbol] = variable;
     }
 
-    void storeValue(std::string symbol, llvm::AllocaInst * value) {
-      m_valueMap[symbol] = value;
+    llvm::AllocaInst * getVariable(std::string symbol) {
+      ASSERT(m_variableMap.count(symbol) != 0,"symbol exists: " << symbol);
+      return m_variableMap[symbol];
     }
 
-    llvm::AllocaInst * getValue(std::string symbol) {
-      ASSERT(m_valueMap.count(symbol) != 0,"symbol exists: " << symbol);
-      return m_valueMap[symbol];
-    }
-
-    bool hasValue(std::string symbol) {
-      return m_valueMap.count(symbol) != 0;
+    bool hasVariable(std::string symbol) {
+      return m_variableMap.count(symbol) != 0;
     }
 
   };
