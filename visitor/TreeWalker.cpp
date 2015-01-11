@@ -6,108 +6,208 @@
 #include "ast/node.hpp"
 #include "ast/expressions.hpp"
 #include "ast/statements.hpp"
-
 #include "symbolTable/SymbolTable.hpp"
 
 #include "assert.hpp"
 
-
+#include "llvm/ExecutionEngine/GenericValue.h"
+#include "llvm/ExecutionEngine/Interpreter.h"
+#include "llvm/ExecutionEngine/JIT.h"
+#include "llvm/IR/Constants.h"
+#include "llvm/IR/DerivedTypes.h"
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/IR/Instructions.h"
+#include "llvm/IR/LLVMContext.h"
+#include "llvm/IR/Module.h"
+#include "llvm/Support/ManagedStatic.h"
+#include "llvm/Support/TargetSelect.h"
+#include "llvm/Support/raw_ostream.h"
 
 #include <iostream>
 #include <memory>
 #include <vector>
 
+#define LlvmInt32(builder, value) (builder->getInt32(value))
+
+#define FunctionInputTerminator (static_cast<llvm::Type *>(0))
+
+
+// wrappers for reduced visual clutter
+  
+#define getBuilder(currentBlock) (llvm::make_unique<llvm::IRBuilder<>>(currentBlock))
+#define getInt32Type(context) (llvm::Type::getInt32Ty(*context))
+
 namespace anvil{
+
+  TreeWalker::~TreeWalker() 
+  {
+
+
+#ifdef DEBUG
+    std::cout << "##### LLVM IR #####" << std::endl;
+    llvm::outs() << *m_module.get();
+    llvm::outs().flush();
+
+
+#endif
+    llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(m_module)).create();
+    int (*function)() = EE->getPointerToFunction(m_mainFunction);
+
+    std::cout << function() << std::endl;
+
+    EE->freeMachineCodeForFunction(m_mainFunction);
+  }
+
+  TreeWalker::TreeWalker() 
+  {
+    
+    llvm::InitializeNativeTarget();
+
+    m_context = /*std::unique_ptr<llvm::LLVMContext>*/(new llvm::LLVMContext());
+
+    // make a module to hold the function
+    m_module = llvm::make_unique<llvm::Module>("module", *m_context);
+    //
+    // initialize "main" function
+
+    m_mainFunction =
+      /*std::unique_ptr<llvm::Function>*/(llvm::cast<llvm::Function>(m_module->getOrInsertFunction("main", 
+											       llvm::Type::getInt32Ty(*m_context), // output
+											       FunctionInputTerminator)));
+
+    // initialize malloc 
+    llvm::PointerType * mallocOutput = llvm::PointerType::get(llvm::Type::getVoidTy(*m_context),0);
+    llvm::FunctionType * mallocPrototype = llvm::FunctionType::get(mallocOutput, {llvm::Type::getInt32Ty(*m_context)}, FunctionInputTerminator);
+    m_malloc = /*std::unique_ptr<llvm::Function>*/(
+					       llvm::cast<llvm::Function>(m_module->getOrInsertFunction("malloc",mallocPrototype)));
+    
+    // initialize free
+    llvm::PointerType * freeOutput = llvm::PointerType::get(llvm::Type::getVoidTy(*m_context),0);
+    llvm::FunctionType * freePrototype = llvm::FunctionType::get(freeOutput, {llvm::Type::getInt32Ty(*m_context)}, FunctionInputTerminator);
+    m_free = /*std::unique_ptr<llvm::Function>*/(
+					     llvm::cast<llvm::Function>(m_module->getOrInsertFunction("free",freePrototype)));
+
+    // setup top level basic block
+    m_currentBlock = llvm::BasicBlock::Create(*m_context, "mainBlock", m_mainFunction);
+    m_currentBuilder = getBuilder(m_currentBlock);
+
+  }
 
 
   void TreeWalker::visit(Expression * node)
   {
-    std::cout << "visiting expression: " << node->print() << std::endl;
+
 
   }
 
   void TreeWalker::visit(Assignment * node)
   {
-    std::cout << "assignment" << std::endl;
-    
+
+    llvm::AllocaInst * resultLocation;
+
+    if (m_symbolTable.hasName(node->getName())) {
+      // already exists
+      std::string resultName = m_symbolTable.getName(node->getName());
+      resultLocation = m_symbolTable.getValue(resultName);
+    } else {
+      // new allocation
+      std::string resultName = m_symbolTable.addName(node->getName());
+      resultLocation = m_currentBuilder->CreateAlloca(getInt32Type(m_context),0,resultName);
+
+      m_symbolTable.storeValue(resultName, resultLocation);
+    }
+
     node->getRHS()->visit(this);
 
-    std::string endValue = m_symbolTable.addOrUpdateName(node->getName());
+    llvm::Value * resultValue = node->getRHS()->getValue();
 
-    addTerm(operations::Add,{endValue,"$zero",getCurrentResult()});
+    m_currentBuilder->CreateStore(resultValue, resultLocation);
 
+    node->setValue(resultValue);
   }
 
     
   void TreeWalker::visit(BinaryOperator * node)
-  {
-    node->getRight()->visit(this);
-    std::string rightResult = getCurrentResult();
-    std::cout << "rightResult " << rightResult << std::endl;
 
-    node->getLeft()->visit(this);
-    std::string leftResult = getCurrentResult();
-    std::cout << "leftResult " << leftResult << std::endl;
-    
+  {
+    Expression * right = node->getRight();
+    Expression * left = node->getLeft();
+
+    right->visit(this);
+    llvm::Value * rightValue = right->getValue();
+
+    ASSERT(rightValue, "right of binary operator doesn't have a llvm::Value");
+
+    left->visit(this);
+    llvm::Value * leftValue = left->getValue();
+
+    ASSERT(leftValue, "left of binary operator doesn't have a llvm::Value");
+
+    std::string resultName = m_symbolTable.getUniqueName();
+    llvm::Value * resultValue = NULL;
+
     operators::BinaryOperatorType expressionType = node->getType();
 
-    operations::TermOperation operation;
-    std::vector<std::string> operands = {m_symbolTable.getUniqueName(),leftResult, rightResult};
-    
-    
 
-    switch(expressionType){
+    switch(expressionType) {
+
     case operators::Add:
-      std::cout << "visit add" << std::endl;
-    
-      operation = operations::Add;
 
-      break;
-    case operators::Multiply:
-      std::cout << "visit mult" << std::endl;
-      operation = operations::Multiply;
+      
+      resultValue = m_currentBuilder->CreateAdd(leftValue, rightValue, resultName);
+
       break;
 
     case operators::LessThan:
-      operation = operations::LessThan;
+
+      resultValue = m_currentBuilder->CreateICmpSLT(leftValue, rightValue, resultName);
+
       break;
-    case operators::Comma:
 
     case operators::Subtract:
+
+      break;
+
+
+
+    case operators::And:
+    case operators::Comma:
     case operators::Divide:
-    case operators::Modulo:
+    case operators::Dot:
+    case operators::Equal:
     case operators::GreaterThan:
     case operators::GreaterThanOrEqual:
     case operators::LessThanOrEqual:
-    case operators::Equal:
+    case operators::Modulo:
+    case operators::Multiply:
     case operators::NotEqual:
-    case operators::Xor:
-    case operators::And:
     case operators::Or:
-    case operators::ShiftRight:
     case operators::ShiftLeft:
-    case operators::Dot:
+    case operators::ShiftRight:
+    case operators::Xor:
     default:	
       ASSERT(false,"tree walker: Unsupported binary operator type:" << expressionType);
       break;
     }
 
+    ASSERT(resultValue, "no result of binary operator");
 
-    
-    std::shared_ptr<Term> currentTerm(new Term(operation,operands));
-
-    m_terms.push_back(move(currentTerm));
-
+    node->setValue(resultValue);
 
   }
 
   void TreeWalker::visit(Id * node)
   {
-    std::cout << "visit id" << std::endl;
 
-    std::string myTemp = m_symbolTable.getName(node->getId());
 
-    addTerm(operations::Add,{myTemp,"$zero",myTemp});
+    std::string name = m_symbolTable.getName(node->getId());
+
+    llvm::AllocaInst * location = m_symbolTable.getValue(name);
+
+    llvm::Value * loadedValue = m_currentBuilder->CreateLoad(location, name);
+
+    node->setValue(loadedValue);
+
   }
 
   void TreeWalker::visit(Statement * node)
@@ -127,50 +227,60 @@ namespace anvil{
 
   void TreeWalker::visit(Number * node)
   {
-    std::cout << "visit number" << std::endl;
-    addTerm(operations::Add,{m_symbolTable.getUniqueName(),"0x0",node->print()});
 
+    std::string resultName = m_symbolTable.getUniqueName();
+    
+    llvm::Value * currentValue = m_currentBuilder->CreateAdd(LlvmInt32(m_currentBuilder,node->getInt()), LlvmInt32(m_currentBuilder,0), resultName);
+    
+    node->setValue(currentValue);
   }
+
   void TreeWalker::visit(ForLoop * node)
   {
-    std::cout << "for loop" << std::endl;
 
-    std::cout << "setup" << std::endl;
 
-    Expression * initial = node->getInitial();
+    Expression * setup = node->getInitial();
     Expression * condition = node->getCondition();
-    Expression * counter = node->getCounter();
-    
-    std::string startLabel = m_symbolTable.getUniqueName();
-    std::string endLabel = m_symbolTable.getUniqueName();
-    
-    std::cout << "initial" << std::endl;
+    Expression * increment = node->getCounter();
+    StatementList * body = node->getBody();
 
-    initial->visit(this);
-    std::string initialResult = getCurrentResult();
+    llvm::BasicBlock * setupBlock = llvm::BasicBlock::Create(*m_context, "setup", m_mainFunction);
+    llvm::BasicBlock * conditionBlock = llvm::BasicBlock::Create(*m_context, "condition", m_mainFunction);
+    llvm::BasicBlock * bodyBlock = llvm::BasicBlock::Create(*m_context, "body", m_mainFunction);
+    llvm::BasicBlock * incrementBlock = llvm::BasicBlock::Create(*m_context, "increment", m_mainFunction);
+    llvm::BasicBlock * postBlock = llvm::BasicBlock::Create(*m_context, "post", m_mainFunction);
 
-    addTerm(operations::Label,{startLabel});
+    // setup
+    m_currentBuilder->CreateBr(setupBlock);
+    m_currentBuilder = getBuilder(setupBlock);
+    m_currentBlock = setupBlock;
+    setup->visit(this);
 
-    std::cout << "condition" << std::endl;
+    m_currentBuilder->CreateBr(conditionBlock);
+
+    // condition
+    m_currentBuilder = getBuilder(conditionBlock);
+    m_currentBlock = conditionBlock;
     condition->visit(this);
-    std::string conditionalResult = getCurrentResult();
-
-    addTerm(operations::JumpIfEqual,{"$zero",conditionalResult,endLabel});
     
-    std::cout << "counter" << std::endl;
-    counter->visit(this);
-    std::string counterResult = getCurrentResult();
+    m_currentBuilder->CreateCondBr(condition->getValue(), bodyBlock, postBlock);
 
-    addTerm(operations::Jump,{initialResult,"$zero",counterResult});
+    // body
+    m_currentBuilder = getBuilder(bodyBlock);
+    m_currentBlock = bodyBlock;
+    body->visit(this);
+    m_currentBuilder->CreateBr(incrementBlock);
 
-    node->getBody()->visit(this);
+    // increment
+    m_currentBuilder = getBuilder(incrementBlock);
+    m_currentBlock = incrementBlock;
+    increment->visit(this);
 
-    addTerm(operations::Jump,{startLabel});
+    m_currentBuilder->CreateBr(conditionBlock);
 
-    addTerm(operations::Label,{endLabel});
-
-
-
+    // post
+    m_currentBuilder = getBuilder(postBlock);
+    m_currentBlock = postBlock;
   }
 
   void TreeWalker::visit(FunctionDefinition * node)
@@ -187,6 +297,15 @@ namespace anvil{
   }
   void TreeWalker::visit(ConditionalBlock* node)
   {
+
+  }
+  void TreeWalker::visit(ReturnStatement* node)
+  {
+    node->getExpression()->visit(this);
+
+    llvm::Value * returnValue = node->getExpression()->getValue();
+        
+    m_currentBuilder->CreateRet(returnValue);
 
   }
 

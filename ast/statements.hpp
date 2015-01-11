@@ -91,6 +91,33 @@ namespace anvil{
 
   };
 
+  class ReturnStatement : public Statement
+  {
+  private:
+    Expression * m_expression;
+
+    ReturnStatement() {}
+  public:
+    ReturnStatement(Expression * expression) : m_expression(expression) {}
+
+    std::string print(){
+      std::ostringstream strs;
+      strs << "return" << m_expression->print();
+      return strs.str();
+    }
+    
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
+    Expression * getExpression()
+    {
+      return m_expression;
+    }
+
+
+  };
 
 }
 #endif

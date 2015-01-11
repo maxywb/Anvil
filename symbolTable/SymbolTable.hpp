@@ -3,6 +3,8 @@
 
 #include "assert.hpp"
 
+#include "llvm/IR/Instructions.h"
+
 #include <string>
 #include <sstream>
 #include <unordered_map>
@@ -16,6 +18,7 @@ namespace anvil{
     size_t m_nameCounter;
 
     std::unordered_map<std::string,size_t> m_symbolMap;
+    std::unordered_map<std::string, llvm::AllocaInst *> m_valueMap;
 
     size_t getUniqueNumber()
     {
@@ -29,7 +32,7 @@ namespace anvil{
     std::string getUniqueName()
     {
       std::ostringstream strs;
-      strs << "temp" << getUniqueNumber();
+      strs << "R" << getUniqueNumber();
       return strs.str();
     }
 
@@ -63,8 +66,13 @@ namespace anvil{
     {
       ASSERT(m_symbolMap.count(symbol) != 0,"symbol exists: " << symbol);
       std::ostringstream strs;
-      strs << "temp" << m_symbolMap[symbol];
+      strs << "R" << m_symbolMap[symbol];
       return strs.str();
+    }
+
+    bool hasName(std::string symbol) 
+    {
+      return m_symbolMap.count(symbol) != 0;
     }
 
     size_t updateSymbol(std::string symbol)
@@ -73,7 +81,18 @@ namespace anvil{
       m_symbolMap[symbol] = getUniqueNumber();
     }
 
+    void storeValue(std::string symbol, llvm::AllocaInst * value) {
+      m_valueMap[symbol] = value;
+    }
 
+    llvm::AllocaInst * getValue(std::string symbol) {
+      ASSERT(m_valueMap.count(symbol) != 0,"symbol exists: " << symbol);
+      return m_valueMap[symbol];
+    }
+
+    bool hasValue(std::string symbol) {
+      return m_valueMap.count(symbol) != 0;
+    }
 
   };
 }

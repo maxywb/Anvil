@@ -5,6 +5,8 @@
 #include "expressions.hpp"
 #include "visitor/TreeWalker.hpp"
 
+#include "llvm/ExecutionEngine/GenericValue.h"
+
 #include <string>
 #include <list>
 #include <sstream>
@@ -81,9 +83,21 @@ namespace anvil{
   protected:
     Expression * m_parent;
 
+    llvm::Value * m_value;
+    
   public:
     std::string print(){
       return "expr";
+    }
+
+    void setValue(llvm::Value * newValue)
+    {
+      m_value = newValue;
+    }
+
+    llvm::Value * getValue()
+    {
+      return m_value;
     }
 
     void setParent(Expression * parent) {

@@ -105,6 +105,7 @@ statement_list: statement statement_list
   $$ = new anvil::StatementList();
   $$->push_front($1);
 }
+
 statement: expression SEMI
 {
   $$ = $1;
@@ -124,7 +125,13 @@ loop
 {
   $$ = $1;
 }
-| SEMI
+|
+RETURN expression SEMI
+{
+  $$ = new anvil::ReturnStatement($2);
+}
+|
+SEMI
 {
   $$ = NULL;
 }

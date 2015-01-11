@@ -1,4 +1,3 @@
-#define GET_POINTER 1
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/Interpreter.h"
 #include "llvm/ExecutionEngine/JIT.h"
@@ -17,14 +16,14 @@
 #include <vector>
 
 /*
-int32 function foo(length) {
+int32 function foo(int32 index) {
   x = malloc(length*sizeof(int32));
   x[0] = 2;
-  i = 0;
+  i = 1;
   for(; i < 10; i++) {
-    x = x * 2;
+    x[i] = x[i-1] * 2;
   }
-  return x;
+  return x[index];
 }
 */
 
@@ -44,7 +43,9 @@ int main() {
 
     // setup "main" function and top level basic block
     llvm::Function *mainFunction =
-        llvm::cast<llvm::Function>(module->getOrInsertFunction("main", llvm::Type::getInt32Ty(context),
+        llvm::cast<llvm::Function>(module->getOrInsertFunction("foo", 
+							       llvm::Type::getInt32Ty(context), // output
+							       llvm::Type::getInt32Ty(context), // input
 							       FunctionInputTerminator));
     
 
@@ -109,7 +110,11 @@ int main() {
     body.CreateBr(conditionBlock);
 
     /* post */
-    llvm::Value * retIndex = post.CreateShl(LlvmInt32(post,2), LlvmInt32(post,2), "retIndex");
+
+    llvm::Function::arg_iterator arguments = mainFunction->arg_begin();
+    llvm::Value * requestedIndex = arguments;
+
+    llvm::Value * retIndex = post.CreateShl(requestedIndex, LlvmInt32(post,2), "retIndex");
     llvm::Value * retOffset = post.CreateAdd(array, retIndex, "retOffset");
 
     llvm::Value * returnValue = post.CreateLoad(retOffset, "return");
@@ -122,12 +127,10 @@ int main() {
 
     llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(module)).create();
 
-    // Call the `main' function with no arguments:
-    std::vector<llvm::GenericValue> noargs;
-    llvm::GenericValue gv = EE->runFunction(mainFunction, noargs);
+    // call main with the index
+    int (*function)(int) = EE->getPointerToFunction(mainFunction);
 
-    // Import result of execution:
-    llvm::outs() << "Result: " << gv.IntVal << "\n";
+    std::cout << "Result: " << function(0) << std::endl;;
 
     EE->freeMachineCodeForFunction(mainFunction);
 
@@ -135,3 +138,4 @@ int main() {
     llvm::llvm_shutdown();
     return 0;
 }
+

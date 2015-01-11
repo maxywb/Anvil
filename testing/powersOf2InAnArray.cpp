@@ -130,7 +130,7 @@ int main() {
     // call main with the index
     int (*function)(int) = EE->getPointerToFunction(mainFunction);
 
-    std::cout << "Result: " << function(0) << std::endl;;
+    std::cout << "Result: " << function(0) << std::endl;
 
     EE->freeMachineCodeForFunction(mainFunction);
 

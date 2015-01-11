@@ -13,6 +13,41 @@
 
 namespace anvil{
 
+  class Assignment : public Expression
+  {
+  private:
+    std::string m_name;
+    Expression * m_rhs;
+  public:
+    Assignment(std::string *name, Expression * rhs) 
+      : m_name(*name),m_rhs(rhs) {}
+
+    std::string print(){
+      std::ostringstream strs;
+
+      strs << m_name;
+      strs << "=";
+      strs << m_rhs->print();
+
+      return strs.str();
+    }
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
+    Expression * getRHS()
+    {
+      return m_rhs;
+    }
+
+    std::string getName()
+    {
+      return m_name;
+    }
+
+  };
+
   class FunctionCall : public Expression
   {
   private:
@@ -49,6 +84,14 @@ namespace anvil{
     Number(double value) 
       :  m_value(value) {}
     
+    double getDouble() {
+      return m_value;
+    }
+
+    int getInt() {
+      return static_cast<int>(m_value);
+    }
+
     std::string print(){
       std::ostringstream strs;
       strs << m_value;
@@ -203,44 +246,6 @@ namespace anvil{
 
 
   };
-
-  class Assignment : public Expression
-  {
-  private:
-    std::string m_name;
-    Expression * m_rhs;
-  public:
-    Assignment(std::string *name, Expression * rhs) 
-      : m_name(*name),m_rhs(rhs) {}
-
-    std::string print(){
-      std::ostringstream strs;
-
-      strs << m_name;
-      strs << "=";
-      strs << m_rhs->print();
-
-      return strs.str();
-    }
-    void visit(TreeWalker * walker)
-    {
-      walker->visit(this);
-    }
-
-    Expression * getRHS()
-    {
-      return m_rhs;
-    }
-
-    std::string getName()
-    {
-      return m_name;
-    }
-
-  };
-
-
-
 
 }
 #endif
