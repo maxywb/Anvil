@@ -12,6 +12,7 @@
 #include <memory>
 #include <list>
 #include <string>
+#include <stack>
 
 namespace llvm {
   class LLVMContext;
@@ -31,6 +32,7 @@ namespace anvil
   class ConditionalBranch;
   class Expression;
   class ForLoop;
+  class FunctionCall;
   class FunctionDefinition;
   class StatementList;
   class Statement;
@@ -38,11 +40,19 @@ namespace anvil
   class Id;
   class ReturnStatement;
 
+  class Scope
+  {
+  public:
+    llvm::BasicBlock * block;
+    llvm::Function * function;
+    Scope(llvm::BasicBlock * _block, llvm::Function * _function) : block(_block), function(_function) {};
+  };
+
 
   class TreeWalker
   {
   private:
-    SymbolTable m_symbolTable;
+    std::unique_ptr<SymbolTable> m_symbolTable;
 
     std::unique_ptr<llvm::Module> m_module;
 
@@ -53,6 +63,12 @@ namespace anvil
 
     llvm::BasicBlock * m_currentBlock;
     std::unique_ptr<llvm::IRBuilder<> > m_currentBuilder;
+    llvm::Function * m_currentFunction;
+    
+    std::stack<Scope> m_scope;
+
+    void descendScope(llvm::BasicBlock * bb, llvm::Function * f);
+    void ascendScope();
 
   public:
     TreeWalker();
@@ -66,6 +82,7 @@ namespace anvil
     void visit(ConditionalBranch* node);
     void visit(Expression * node);
     void visit(ForLoop * node);
+    void visit(FunctionCall * node);
     void visit(FunctionDefinition * node);
     void visit(Statement * node);
     void visit(StatementList * node);

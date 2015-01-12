@@ -97,6 +97,7 @@ namespace anvil{
 
     llvm::Value * getValue()
     {
+      ASSERT(m_value, "requested NULL value");
       return m_value;
     }
 

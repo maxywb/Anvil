@@ -15,30 +15,31 @@ namespace anvil{
   class FunctionDefinition : public Statement
   {
   private:
-    std::string * m_name;
-    std::list<std::string *> * m_parameters;
+    std::string m_name;
+    std::list<Expression *> * m_parameters;
 
     StatementList * m_body;
 
   public:
-    FunctionDefinition(std::string * name, std::list<std::string *> * params, 
+    FunctionDefinition(std::string * name, std::list<Expression *> * params, 
 		       StatementList * body) 
-        : m_name(name), m_parameters(params), m_body(body){}
+      : m_name(*name), m_parameters(params), m_body(body){}
 
     std::string print(){
       std::ostringstream strs;
 
       strs << "def ";
-      strs << *m_name;
+      strs << m_name;
       strs << "(";
-      for(std::list<std::string *>::iterator itr = m_parameters->begin();
+      for(auto itr = m_parameters->begin();
 	  itr != m_parameters->end();
-	  itr++){
-	strs << *(*itr);
+	  ++itr) {
+	strs << (*itr)->print();
 	strs << ",";
       }
       strs << ")";
       strs << std::endl << "{" << std::endl;
+
       for(StatementList::iterator itr = m_body->begin();
 	  itr != m_body->end();
 	  itr++){
@@ -48,14 +49,25 @@ namespace anvil{
       }
       strs << "}";
 
-    return strs.str();
-  }
+      return strs.str();
+    }
 
-      void visit(TreeWalker * walker)
-      {
-          walker->visit(this);
-      }
-};
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
+    StatementList * getBody() 
+    {
+      return m_body;
+    }
+
+    std::string getName()
+    {
+      return m_name;
+    }
+
+  };
 
 
 

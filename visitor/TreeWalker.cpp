@@ -31,7 +31,6 @@
 
 #define FunctionInputTerminator (static_cast<llvm::Type *>(0))
 
-
 // wrappers for reduced visual clutter
   
 #define getBuilder(currentBlock) (llvm::make_unique<llvm::IRBuilder<>>(currentBlock))
@@ -41,8 +40,7 @@ namespace anvil{
 
   TreeWalker::~TreeWalker() 
   {
-
-
+    PRINT("~TreeWalker" << std::endl);
 #ifdef DEBUG
     std::cout << "##### LLVM IR #####" << std::endl;
     llvm::outs() << *m_module.get();
@@ -58,9 +56,12 @@ namespace anvil{
     EE->freeMachineCodeForFunction(m_mainFunction);
   }
 
-  TreeWalker::TreeWalker() 
+  TreeWalker::TreeWalker() : m_symbolTable(new SymbolTable()) 
   {
-    
+    PRINT("treewalker" << std::endl;);
+
+
+
     llvm::InitializeNativeTarget();
 
     m_context = /*std::unique_ptr<llvm::LLVMContext>*/(new llvm::LLVMContext());
@@ -71,26 +72,25 @@ namespace anvil{
     // initialize "main" function
 
     m_mainFunction =
-      /*std::unique_ptr<llvm::Function>*/(llvm::cast<llvm::Function>(m_module->getOrInsertFunction("main", 
-											       llvm::Type::getInt32Ty(*m_context), // output
-											       FunctionInputTerminator)));
-
+      (llvm::cast<llvm::Function>(m_module->getOrInsertFunction("main", 
+								llvm::Type::getInt32Ty(*m_context), // output
+								FunctionInputTerminator)));
+    
     // initialize malloc 
     llvm::PointerType * mallocOutput = llvm::PointerType::get(llvm::Type::getVoidTy(*m_context),0);
     llvm::FunctionType * mallocPrototype = llvm::FunctionType::get(mallocOutput, {llvm::Type::getInt32Ty(*m_context)}, FunctionInputTerminator);
-    m_malloc = /*std::unique_ptr<llvm::Function>*/(
-					       llvm::cast<llvm::Function>(m_module->getOrInsertFunction("malloc",mallocPrototype)));
+    m_malloc = llvm::cast<llvm::Function>(m_module->getOrInsertFunction("malloc",mallocPrototype));
+      
     
     // initialize free
     llvm::PointerType * freeOutput = llvm::PointerType::get(llvm::Type::getVoidTy(*m_context),0);
     llvm::FunctionType * freePrototype = llvm::FunctionType::get(freeOutput, {llvm::Type::getInt32Ty(*m_context)}, FunctionInputTerminator);
-    m_free = /*std::unique_ptr<llvm::Function>*/(
-					     llvm::cast<llvm::Function>(m_module->getOrInsertFunction("free",freePrototype)));
+    m_free = llvm::cast<llvm::Function>(m_module->getOrInsertFunction("free",freePrototype));
 
     // setup top level basic block
     m_currentBlock = llvm::BasicBlock::Create(*m_context, "mainBlock", m_mainFunction);
     m_currentBuilder = getBuilder(m_currentBlock);
-
+    m_currentFunction = m_mainFunction;
   }
 
 
@@ -102,19 +102,23 @@ namespace anvil{
 
   void TreeWalker::visit(Assignment * node)
   {
+    PRINT("assignment" << std::endl);
 
     llvm::AllocaInst * resultLocation;
 
-    if (m_symbolTable.hasName(node->getName())) {
+    std::cout << node->getName() << std::endl;
+    std::cout << m_symbolTable->hasName(node->getName()) << std::endl;
+
+    if (m_symbolTable->hasName(node->getName())) {
       // already exists
-      std::string resultName = m_symbolTable.getName(node->getName());
-      resultLocation = m_symbolTable.getVariable(resultName);
+      std::string resultName = m_symbolTable->getName(node->getName());
+      resultLocation = m_symbolTable->getVariable(resultName);
     } else {
       // new allocation
-      std::string resultName = m_symbolTable.addName(node->getName());
+      std::string resultName = m_symbolTable->addName(node->getName());
       resultLocation = m_currentBuilder->CreateAlloca(getInt32Type(m_context),0,resultName);
 
-      m_symbolTable.storeVariable(resultName, resultLocation);
+      m_symbolTable->storeVariable(resultName, resultLocation);
     }
 
     node->getRHS()->visit(this);
@@ -143,7 +147,7 @@ namespace anvil{
 
     ASSERT(leftValue, "left of binary operator doesn't have a llvm::Value");
 
-    std::string resultName = m_symbolTable.getUniqueName();
+    std::string resultName = m_symbolTable->getUniqueName();
     llvm::Value * resultValue = NULL;
 
     operators::BinaryOperatorType expressionType = node->getType();
@@ -198,11 +202,11 @@ namespace anvil{
 
   void TreeWalker::visit(Id * node)
   {
+    PRINT("Id" << std::endl);
 
+    std::string name = m_symbolTable->getName(node->getId());
 
-    std::string name = m_symbolTable.getName(node->getId());
-
-    llvm::AllocaInst * location = m_symbolTable.getVariable(name);
+    llvm::AllocaInst * location = m_symbolTable->getVariable(name);
 
     llvm::Value * loadedValue = m_currentBuilder->CreateLoad(location, name);
 
@@ -227,8 +231,9 @@ namespace anvil{
 
   void TreeWalker::visit(Number * node)
   {
+    PRINT("number" << std::endl);
 
-    std::string resultName = m_symbolTable.getUniqueName();
+    std::string resultName = m_symbolTable->getUniqueName();
     
     llvm::Value * currentValue = m_currentBuilder->CreateAdd(LlvmInt32(m_currentBuilder,node->getInt()), LlvmInt32(m_currentBuilder,0), resultName);
     
@@ -266,9 +271,9 @@ namespace anvil{
     m_currentBuilder->CreateCondBr(condition->getValue(), bodyBlock, postBlock);
 
     // body
-    m_currentBuilder = getBuilder(bodyBlock);
-    m_currentBlock = bodyBlock;
+    descendScope(bodyBlock, m_currentFunction);
     body->visit(this);
+    ascendScope();
     m_currentBuilder->CreateBr(incrementBlock);
 
     // increment
@@ -286,7 +291,20 @@ namespace anvil{
   void TreeWalker::visit(FunctionDefinition * node)
   {
 
+    PRINT("function definition" << std::endl);
+    
+    llvm::Function * function =
+      (llvm::cast<llvm::Function>(m_module->getOrInsertFunction("main", 
+								llvm::Type::getInt32Ty(*m_context), // output
+								FunctionInputTerminator)));
+
+    m_symbolTable->addName(node->getName());
+    
+    
+
+
   }
+
   void TreeWalker::visit(WhileLoop* node)
   {
 
@@ -309,6 +327,33 @@ namespace anvil{
 
   }
 
+  void TreeWalker::descendScope(llvm::BasicBlock * bb, llvm::Function * f)
+  {
+
+    m_scope.push(Scope(bb, f));
+
+    m_currentBuilder = getBuilder(bb);
+    m_currentBlock = bb;
+    m_currentFunction = f;
+
+  }
+
+  void TreeWalker::ascendScope()
+  {
+
+    Scope parent = m_scope.top();
+    m_scope.pop();
+    
+    m_currentBlock = parent.block;;
+    m_currentFunction = parent.function;
+
+    m_currentBuilder = getBuilder(m_currentBlock);
+
+  }
+
+    void visit(FunctionCall * node)
+    {
+      PRINT("FunctionCall" << std::endl);
+    }
+
 }
-
-

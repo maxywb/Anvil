@@ -5,6 +5,7 @@
 
 #include "llvm/IR/Instructions.h"
 
+#include <stack>
 #include <string>
 #include <sstream>
 #include <unordered_map>
@@ -21,8 +22,9 @@ namespace anvil{
   private:
     size_t m_nameCounter;
 
-    std::unordered_map<std::string,std::string> m_nameMap;
-    std::unordered_map<std::string, llvm::AllocaInst *> m_variableMap;
+    std::unordered_map<std::string, std::string> m_names;
+    std::unordered_map<std::string, llvm::AllocaInst *> m_variables;
+    std::unordered_map<std::string, llvm::Function *> m_definedFunctions;
 
     size_t getUniqueNumber()
     {
@@ -33,6 +35,8 @@ namespace anvil{
 
     SymbolTable() : m_nameCounter(0UL) {}
 
+    /* ########## names ########## */
+
     std::string getUniqueName()
     {
       std::ostringstream strs;
@@ -40,41 +44,60 @@ namespace anvil{
       return strs.str();
     }
 
-    std::string addName(std::string symbol)
+    bool hasName(std::string name) 
     {
-      ASSERT(m_nameMap.count(symbol) == 0,"symbol exists: " << symbol);
-      addName(symbol);
-      return getName(symbol);
+      return m_names.count(name) != 0;
     }
 
-    std::string addOrUpdateName(std::string symbol)
+    std::string addName(std::string name)
     {
-      m_nameMap[symbol] = getUniqueName();
-      return getName(symbol);
+      ASSERT(!hasName(name),"name exists: " << name);
+      
+      return m_names[name] = getUniqueName();
     }
 
-    std::string getName(std::string symbol)
+    std::string addOrUpdateName(std::string name)
     {
-      ASSERT(m_nameMap.count(symbol) != 0,"symbol exists: " << symbol);
-      return m_nameMap[symbol];
+      m_names[name] = getUniqueName();
+      return getName(name);
     }
 
-    bool hasName(std::string symbol) 
+    std::string getName(std::string name)
     {
-      return m_nameMap.count(symbol) != 0;
+      ASSERT(hasName(name),"name exists: " << name);
+      return m_names[name];
     }
 
-    void storeVariable(std::string symbol, llvm::AllocaInst * variable) {
-      m_variableMap[symbol] = variable;
+    /* ########## variables ########## */
+
+
+    bool hasVariable(std::string name) {
+      return m_variables.count(name) != 0;
     }
 
-    llvm::AllocaInst * getVariable(std::string symbol) {
-      ASSERT(m_variableMap.count(symbol) != 0,"symbol exists: " << symbol);
-      return m_variableMap[symbol];
+    void storeVariable(std::string name, llvm::AllocaInst * variable) {
+      m_variables[name] = variable;
     }
 
-    bool hasVariable(std::string symbol) {
-      return m_variableMap.count(symbol) != 0;
+    llvm::AllocaInst * getVariable(std::string name) {
+      ASSERT(hasVariable(name),"variable doesn't exist: " << name);
+      return m_variables[name];
+    }
+
+    /* ########## defined functions ########## */
+
+
+    bool hasFunction(std::string name) {
+      return m_definedFunctions.count(name) != 0;
+    }
+
+    void storeFunctionDefinition(std::string name, llvm::Function * functionDefinition) {
+      m_definedFunctions[name] = functionDefinition;
+    }
+
+    llvm::Function * getFunctionDefinition(std::string name) {
+      ASSERT(hasFunction(name),"function definition doesn't name exists: " << name);
+      return m_definedFunctions[name];
     }
 
   };

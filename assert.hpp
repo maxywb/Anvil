@@ -18,5 +18,12 @@
 #   define ASSERT(condition, message) do { } while (false)
 #endif
 
+#ifndef NDEBUG
+#   define PRINT(message)					\
+  std::cout << message
+#else
+#   define PRINT(message) do { } while (false)
+#endif
+
 
 #endif

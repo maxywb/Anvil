@@ -49,7 +49,7 @@
   double val;
   std::string * string;
 
-  std::list<std::string * > * stringList;
+  std::list<anvil::Expression * > * exprList;
 
 };
 
@@ -61,7 +61,7 @@
 %type <conditionalBlock> conditional
 %type <functionCall> function_call
 %type <assignment> assignment
-%type <stringList> function_parameters
+%type <exprList> function_parameters
 %type <functionDefinition> function_definition
 %type <statementList> statement_list
 
@@ -237,14 +237,14 @@ function_definition: DEF ID LP function_parameters RP LC statement_list RC
   $$ = new anvil::FunctionDefinition($2,$4,$7);
 }
 
-function_parameters: ID COMMA function_parameters
+function_parameters: expression COMMA function_parameters
 {
   $3->insert($3->begin(),$1);
   $$ = $3;
 }
-| ID 
+| expression
 {
-  $$ = new std::list<std::string *>();
+  $$ = new std::list<anvil::Expression *>();
   $$->insert($$->begin(),$1);
 }
 
