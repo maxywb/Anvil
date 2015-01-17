@@ -1,18 +1,15 @@
 #ifndef ANVIL_SYMBOLTABLE_SYMBOLTABLE_HPP
 #define ANVIL_SYMBOLTABLE_SYMBOLTABLE_HPP
 
-#include "assert.hpp"
-
-#include "llvm/IR/Instructions.h"
-
-#include <stack>
-#include <string>
-#include <sstream>
-#include <unordered_map>
-
-namespace {
-
+namespace llvm {
+  class AllocaInst;
+  class Function;
 }
+
+#include <string>
+#include <unordered_map>
+#include <memory>
+#include <list>
 
 namespace anvil{
 
@@ -20,85 +17,59 @@ namespace anvil{
   class SymbolTable
   {
   private:
+    typedef std::unordered_map<std::string, std::string> NamesMap;
+
+    typedef std::unordered_map<std::string, llvm::AllocaInst * > VariablesMap;
+
+    typedef std::unordered_map<std::string, llvm::Function *> FunctionsMap;
+
+    
     size_t m_nameCounter;
 
-    std::unordered_map<std::string, std::string> m_names;
-    std::unordered_map<std::string, llvm::AllocaInst *> m_variables;
-    std::unordered_map<std::string, llvm::Function *> m_definedFunctions;
+    std::list<std::shared_ptr<NamesMap>> m_names;
+    std::shared_ptr<NamesMap> m_currentNames;
 
-    size_t getUniqueNumber()
-    {
-      return m_nameCounter++;
-    }
+    std::list<std::shared_ptr<VariablesMap>> m_variables;
+    std::shared_ptr<VariablesMap> m_currentVariables;
+
+    std::list<std::shared_ptr<FunctionsMap>> m_definedFunctions;
+    std::shared_ptr<FunctionsMap> m_currentDefinedFunctions;
+
+    size_t getUniqueNumber();
 
   public:
 
-    SymbolTable() : m_nameCounter(0UL) {}
+    SymbolTable();
 
     /* ########## names ########## */
 
-    std::string getUniqueName()
-    {
-      std::ostringstream strs;
-      strs << "R" << getUniqueNumber() << "_";
-      return strs.str();
-    }
+    std::string getUniqueName();
 
-    bool hasName(std::string name) 
-    {
-      return m_names.count(name) != 0;
-    }
+    bool hasName(std::string name);
 
-    std::string addName(std::string name)
-    {
-      ASSERT(!hasName(name),"name exists: " << name);
-      
-      return m_names[name] = getUniqueName();
-    }
+    std::string addName(std::string name);
+    
+    std::string addOrUpdateName(std::string name);
 
-    std::string addOrUpdateName(std::string name)
-    {
-      m_names[name] = getUniqueName();
-      return getName(name);
-    }
-
-    std::string getName(std::string name)
-    {
-      ASSERT(hasName(name),"name exists: " << name);
-      return m_names[name];
-    }
+    std::string getName(std::string name);
 
     /* ########## variables ########## */
 
 
-    bool hasVariable(std::string name) {
-      return m_variables.count(name) != 0;
-    }
+    bool hasVariable(std::string name);
 
-    void storeVariable(std::string name, llvm::AllocaInst * variable) {
-      m_variables[name] = variable;
-    }
+    void storeVariable(std::string name, llvm::AllocaInst * variable);
 
-    llvm::AllocaInst * getVariable(std::string name) {
-      ASSERT(hasVariable(name),"variable doesn't exist: " << name);
-      return m_variables[name];
-    }
+    llvm::AllocaInst * getVariable(std::string name);
 
     /* ########## defined functions ########## */
 
 
-    bool hasFunction(std::string name) {
-      return m_definedFunctions.count(name) != 0;
-    }
+    bool hasFunction(std::string name);
 
-    void storeFunctionDefinition(std::string name, llvm::Function * functionDefinition) {
-      m_definedFunctions[name] = functionDefinition;
-    }
+    void storeFunctionDefinition(std::string name, llvm::Function * functionDefinition);
 
-    llvm::Function * getFunctionDefinition(std::string name) {
-      ASSERT(hasFunction(name),"function definition doesn't name exists: " << name);
-      return m_definedFunctions[name];
-    }
+    llvm::Function * getFunctionDefinition(std::string name);
 
   };
 }

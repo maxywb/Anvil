@@ -40,7 +40,6 @@ namespace anvil{
 
   TreeWalker::~TreeWalker() 
   {
-    PRINT("~TreeWalker" << std::endl);
 #ifdef DEBUG
     std::cout << "##### LLVM IR #####" << std::endl;
     llvm::outs() << *m_module.get();
@@ -48,10 +47,15 @@ namespace anvil{
 
 
 #endif
+
     llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(m_module)).create();
     int (*function)() = EE->getPointerToFunction(m_mainFunction);
 
+#ifdef DEBUG
     std::cout << function() << std::endl;
+#else
+    function();
+#endif
 
     EE->freeMachineCodeForFunction(m_mainFunction);
   }
@@ -104,6 +108,8 @@ namespace anvil{
   {
     PRINT("assignment" << std::endl);
 
+    node->getRHS()->visit(this);
+
     llvm::AllocaInst * resultLocation;
 
     std::cout << node->getName() << std::endl;
@@ -121,7 +127,7 @@ namespace anvil{
       m_symbolTable->storeVariable(resultName, resultLocation);
     }
 
-    node->getRHS()->visit(this);
+
 
     llvm::Value * resultValue = node->getRHS()->getValue();
 
@@ -351,9 +357,9 @@ namespace anvil{
 
   }
 
-    void visit(FunctionCall * node)
-    {
-      PRINT("FunctionCall" << std::endl);
-    }
+  void TreeWalker::visit(FunctionCall * node)
+  {
+    PRINT("FunctionCall" << std::endl);
+  }
 
 }

@@ -5,7 +5,7 @@
    * have to include AllNodes.hpp first otherwise compile errors
    */
 #include "ast/ast.hpp"
-#include "Parser.hpp"
+#include "parser/Parser.hpp"
 #include FLEX_FILE   
 
 #include <iostream>

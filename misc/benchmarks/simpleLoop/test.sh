@@ -44,4 +44,11 @@ done
 gcc3End=`date +%s.%N`
 echo gcc3: $(calc $gcc3End - $gcc3Start)
 
+pythonStart=`date +%s.%N`
+for i in {1..1000}
+do
+    python ./simpleLoop.py
+done
+pythonEnd=`date +%s.%N`
+echo python: $(calc $pythonEnd - $pythonStart)
 
