@@ -19,7 +19,7 @@
   int yylex(); 
   int yyerror(const char *p) { std::cerr << p << " Error!" << std::endl; }
 
-  anvil::StatementList * s_root;
+  std::list<anvil::Statement *> * s_root;
 
 %}
 
@@ -31,7 +31,6 @@
 %union {
   anvil::Expression * expr;
   anvil::Statement * stmt;
-  anvil::StatementList * statementList;
   anvil::Number * number;
   anvil::BinaryOperator * binaryOperator;
   anvil::FunctionCall * functionCall;
@@ -51,6 +50,7 @@
 
   std::list<anvil::Id * > * idList;
   std::list<anvil::Expression * > * exprList;
+  std::list<anvil::Statement *> * stmtList;
 
 };
 
@@ -65,7 +65,7 @@
 %type <exprList> function_arguments
 %type <idList> function_parameters
 %type <functionDefinition> function_definition
-%type <statementList> statement_list
+%type <stmtList> statement_list
 
 %type <conditionalBranch> if_branch
 %type <conditionalBranch> elif_branch
@@ -99,13 +99,13 @@ top : statement_list
 
 statement_list: statement statement_list
 {
-  $2->push_front($1);
+  $2->emplace_front($1);
   $$ = $2;
 }
 | statement
 {
-  $$ = new anvil::StatementList();
-  $$->push_front($1);
+  $$ = new std::list<anvil::Statement *>();
+  $$->emplace_front($1);
 }
 
 statement: expression SEMI

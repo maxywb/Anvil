@@ -18,12 +18,12 @@ namespace anvil{
     std::string m_name;
     std::list<Id *> m_parameters;
 
-    StatementList * m_body;
+    std::list<Statement *> m_body;
 
   public:
     FunctionDefinition(std::string * name, std::list<Id *> * params, 
-		       StatementList * body) 
-      : m_name(*name), m_parameters(params->begin(),params->end()), m_body(body){}
+		       std::list<Statement *> * body) 
+      : m_name(*name), m_parameters(params->begin(),params->end()), m_body(*body){}
 
     std::string print(){
       std::ostringstream strs;
@@ -38,11 +38,9 @@ namespace anvil{
       strs << ")";
       strs << std::endl << "{" << std::endl;
 
-      for(StatementList::iterator itr = m_body->begin();
-	  itr != m_body->end();
-	  itr++){
+      for(auto itr : m_body) {
 	strs << ":";
-	strs << (*itr)->print();
+	strs << itr->print();
 	strs << std::endl;
       }
       strs << "}";
@@ -55,7 +53,7 @@ namespace anvil{
       walker->visit(this);
     }
 
-    StatementList * getBody() 
+    std::list<Statement *> getBody() 
     {
       return m_body;
     }
@@ -72,7 +70,7 @@ namespace anvil{
 
   };
 
-
+  
 
 }
 #endif

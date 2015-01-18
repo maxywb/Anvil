@@ -54,7 +54,8 @@ namespace anvil{
 #ifdef DEBUG
     std::cout << function() << std::endl;
 #else
-    function();
+    std::cout <<function() << std::endl;
+    //function();
 #endif
 
     EE->freeMachineCodeForFunction(m_mainFunction);
@@ -222,16 +223,6 @@ namespace anvil{
     node->visit(this);
   }
 
-
-  void TreeWalker::visit(StatementList * node)
-  {
-    for(StatementList::iterator itr = node->begin();
-	itr != node->end();
-	itr++) {
-      visit(*itr);
-    }
-  }
-
   void TreeWalker::visit(Number * node)
   {
     PRINT("Number" << std::endl);
@@ -250,33 +241,42 @@ namespace anvil{
     Expression * setup = node->getInitial();
     Expression * condition = node->getCondition();
     Expression * increment = node->getCounter();
-    StatementList * body = node->getBody();
+    std::list<Statement *> body = node->getBody();
 
-    llvm::BasicBlock * setupBlock = llvm::BasicBlock::Create(*m_context, "setup", m_mainFunction);
-    llvm::BasicBlock * conditionBlock = llvm::BasicBlock::Create(*m_context, "condition", m_mainFunction);
-    llvm::BasicBlock * bodyBlock = llvm::BasicBlock::Create(*m_context, "body", m_mainFunction);
-    llvm::BasicBlock * incrementBlock = llvm::BasicBlock::Create(*m_context, "increment", m_mainFunction);
-    llvm::BasicBlock * postBlock = llvm::BasicBlock::Create(*m_context, "post", m_mainFunction);
+    llvm::BasicBlock * setupBlock = llvm::BasicBlock::Create(*m_context, "setup", m_currentFunction);
+    llvm::BasicBlock * conditionBlock = llvm::BasicBlock::Create(*m_context, "condition", m_currentFunction);
+    llvm::BasicBlock * bodyBlock = llvm::BasicBlock::Create(*m_context, "body", m_currentFunction);
+    llvm::BasicBlock * incrementBlock = llvm::BasicBlock::Create(*m_context, "increment", m_currentFunction);
+    llvm::BasicBlock * postBlock = llvm::BasicBlock::Create(*m_context, "post", m_currentFunction);
 
     // setup
     m_currentBuilder->CreateBr(setupBlock);
+
     m_currentBuilder = getBuilder(setupBlock);
     m_currentBlock = setupBlock;
+
     setup->visit(this);
 
     m_currentBuilder->CreateBr(conditionBlock);
 
     // condition
-    m_currentBuilder = getBuilder(conditionBlock);
     m_currentBlock = conditionBlock;
+    m_currentBuilder = getBuilder(conditionBlock);
+
     condition->visit(this);
     
     m_currentBuilder->CreateCondBr(condition->getValue(), bodyBlock, postBlock);
 
     // body
     descendScope(bodyBlock, m_currentFunction);
-    body->visit(this);
+    m_currentBuilder = getBuilder(bodyBlock);
+
+    for (auto stmt : body) {
+      stmt->visit(this);
+    }
+
     ascendScope();
+
     m_currentBuilder->CreateBr(incrementBlock);
 
     // increment
@@ -287,8 +287,8 @@ namespace anvil{
     m_currentBuilder->CreateBr(conditionBlock);
 
     // post
-    m_currentBuilder = getBuilder(postBlock);
     m_currentBlock = postBlock;
+    m_currentBuilder = getBuilder(postBlock);
   }
 
   void TreeWalker::visit(FunctionDefinition * node)
@@ -296,10 +296,7 @@ namespace anvil{
 
     PRINT("function definition" << std::endl);
 
-    llvm::Function * oldCurrentFunction = m_currentFunction;
-
     std::list<Id *> parameters = node->getParameters();
-    
 
     llvm::Type * outputType = llvm::Type::getInt32Ty(*m_context);
     std::vector<llvm::Type *> llvmParameters(parameters.size(),getInt32Type(m_context));
@@ -307,8 +304,7 @@ namespace anvil{
     llvm::Function * function = llvm::cast<llvm::Function>(m_module->getOrInsertFunction(node->getName(),functionType));
 
     m_symbolTable->storeFunctionDefinition(node->getName(), function);
-    
-    m_currentFunction = function;
+
     m_symbolTable->descendScope();
 
     // setup top level basic block
@@ -352,7 +348,9 @@ namespace anvil{
     m_currentBlock = firstBlock;
     m_currentBuilder = getBuilder(m_currentBlock);
 
-    node->getBody()->visit(this);
+    for (auto stmt : node->getBody()) {
+      stmt->visit(this);
+    }
 
     m_symbolTable->ascendScope();
 
@@ -382,7 +380,7 @@ namespace anvil{
     node->getExpression()->visit(this);
 
     llvm::Value * returnValue = node->getExpression()->getValue();
-        
+    
     m_currentBuilder->CreateRet(returnValue);
 
   }

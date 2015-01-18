@@ -18,25 +18,20 @@ int main(int argc, char **argv)
 
   anvil::TreeWalker treeWalker;
 
+  std::list<anvil::Statement *> statements(parser.getTreeRoot()->begin(),
+					   parser.getTreeRoot()->end());
 
-
-  anvil::StatementList * root = parser.getTreeRoot();
-
-  anvil::StatementList * stmtList = dynamic_cast<anvil::StatementList *>(root);
 #ifdef DEBUG
-  for(anvil::StatementList::iterator itr = stmtList->begin();
-      itr != stmtList->end();
-      itr++){
-      std::cout << ":";
-      std::cout << (*itr)->print();
-      std::cout << std::endl;
+  for(auto line : statements) {
+    std::cout << ": ";
+    std::cout << line->print();
+    std::cout << std::endl;
   }
 #endif
-  treeWalker.visit(root);
 
-
-
-
+  for(auto stmt : statements) {
+    treeWalker.visit(stmt);
+  }
 
   return 0;
 }

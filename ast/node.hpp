@@ -36,48 +36,6 @@ namespace anvil{
 
   };
 
-  class StatementList
-  {
-  protected:
-    std::list<Statement *> m_statements;
-  public:
-
-    typedef std::list<Statement *>::iterator iterator;
-      
-    iterator begin(){
-      return m_statements.begin();
-    }
-
-    iterator end(){
-      return m_statements.end();
-    }
-
-    void push_front(Statement * stmt){
-      m_statements.insert(m_statements.begin(),stmt);
-    }
-
-    std::string print(){
-      std::ostringstream strs;
-      strs << "sl: ";
-      for(std::list<Statement *>::iterator itr = m_statements.begin();
-	  itr != m_statements.end();
-	  itr++){
-	strs << (*itr)->print();
-	strs << std::endl;
-      }
-	
-      return strs.str();
-    }
-
-    void visit(TreeWalker * walker)
-    {
-      walker->visit(this);
-    }
-
-
-  };
-
-
   class Expression : public Statement
   {
   protected:
@@ -92,17 +50,13 @@ namespace anvil{
 
     void setValue(llvm::Value * newValue)
     {
-      std::cout << "setValue " << newValue << std::endl;
-
       ASSERT(newValue, "setting NULL value");
       m_value = newValue;
     }
 
     llvm::Value * getValue()
     {
-      if (!m_value) {
-	ASSERT(m_value, "requested NULL value");
-      }
+      ASSERT(m_value, "requested NULL value");
       return m_value;
     }
 

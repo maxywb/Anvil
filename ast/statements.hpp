@@ -16,11 +16,11 @@ namespace anvil{
   {
   private:
     Expression * m_condition; // this is NULL when it's an else
-    StatementList * m_body;
+    std::list<Statement *> m_body;
   public:
 
-    ConditionalBranch(Expression * condition, StatementList * body) 
-      : m_condition(condition), m_body(body) 
+    ConditionalBranch(Expression * condition, std::list<Statement *> * body) 
+      : m_condition(condition), m_body(*body)
     {
       ASSERT(body, "can't initialize conditional with NULL body");
     }
@@ -34,7 +34,9 @@ namespace anvil{
       }
       strs << ")" << std::endl;
       strs << "{" << std::endl;
-      strs << m_body->print();
+      for (auto line : m_body) {
+	strs << line->print();
+      }
       strs << "}" << std::endl;
       return strs.str();
     }

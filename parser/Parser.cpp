@@ -3,15 +3,20 @@
 #include "assert.hpp"
 #include "Parser.hpp"
 
+
 #include BISON_FILE
 
+
+
 #include <iostream>
+#include <list>
 
 #include <stdio.h>
 
 extern int yyparse();
 extern FILE * yyin;
-extern anvil::StatementList * s_root;
+extern std::list<anvil::Statement * > * s_root;
+
 
 namespace anvil{
   void Parser::setFile(char * file)
@@ -28,7 +33,7 @@ namespace anvil{
       m_treeRoot = s_root;
     }
 
-  StatementList * Parser::getTreeRoot()
+  std::list<Statement *> * Parser::getTreeRoot()
     {
       return s_root;
     }

@@ -7,25 +7,26 @@
 //#include BISON_FILE
 
 #include <iostream>
+#include <list>
 
 #include <stdio.h>
 
 extern int yyparse();
 extern FILE * yyin;
-extern anvil::StatementList * s_root;
+extern std::list<anvil::Statement * > * s_root;
 
 namespace anvil{
   class Parser 
   {
   private:
-    StatementList  * m_treeRoot;
+    std::list<Statement  *> * m_treeRoot;
     
   public:
     void setFile(char * file);
 
     void parse();
 
-    StatementList * getTreeRoot();
+    std::list<Statement *> * getTreeRoot();
 
   };
 

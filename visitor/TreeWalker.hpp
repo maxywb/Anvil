@@ -34,7 +34,6 @@ namespace anvil
   class ForLoop;
   class FunctionCall;
   class FunctionDefinition;
-  class StatementList;
   class Statement;
   class WhileLoop;
   class Id;
@@ -85,7 +84,6 @@ namespace anvil
     void visit(FunctionCall * node);
     void visit(FunctionDefinition * node);
     void visit(Statement * node);
-    void visit(StatementList * node);
     void visit(WhileLoop* node);
     void visit(ReturnStatement* node);
 

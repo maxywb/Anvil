@@ -1,0 +1,1469 @@
+meatwad~/Dropbox/src/AnViL/ast
+$ ../misc/benchmarks/
+../misc/benchmarks/: Permission denied.
+meatwad~/Dropbox/src/AnViL/ast
+$ cd ../misc/benchmarks/
+meatwad~/Dropbox/src/AnViL/misc/benchmarks
+$ cd ./simpleLoopAddition/ && test.sh && ./test.sh && cd ../simpleLoopAdditionWithFunctionCall/ && test.sh && ./test.sh 
+test.sh: Command not found.
+meatwad~/Dropbox/src/AnViL/misc/benchmarks/simpleLoopAddition
+$ ls
+simple.c  simpleLoop.avl  simpleLoop.avl~  simpleLoop.py  simpleLoop.py~  simple_0  simple_1  simple_2  simple_3  test.sh  test.sh~
+meatwad~/Dropbox/src/AnViL/misc/benchmarks/simpleLoopAddition
+$ cd ..
+meatwad~/Dropbox/src/AnViL/misc/benchmarks
+$ cd ./simpleLoopAddition/ && ./test.sh && ./test.sh && cd ../simpleLoopAdditionWithFunctionCall/ && ./test.sh && ./test.sh 
+ANVIL: 12.420665376
+gcc0: 5.612474561
+gcc1: 1.937115069
+gcc2: 0.921667193
+gcc3: 0.926122376
+python: 163.988347496
+ANVIL: 12.291561715
+gcc0: 5.928384639
+gcc1: 1.938927171
+gcc2: 0.917715755
+gcc3: 0.904305006
+python: 164.317188134
+ANVIL: 16.889749089
+gcc0: 6.609182964
+gcc1: 4.968834177
+gcc2: 0.928642157
+gcc3: 0.913833345
+python: 166.545311777
+ANVIL: 16.691253954
+gcc0: 6.618975972
+gcc1: 4.945913554
+gcc2: 0.907291572
+gcc3: 0.896433882
+python: 165.246380394
+meatwad~/Dropbox/src/AnViL/misc/benchmarks/simpleLoopAdditionWithFunctionCall
+$ git commit -m "simple function calls and function definitions"
+[master 5b0951b] simple function calls and function definitions
+ 1 file changed, 41 deletions(-)
+ delete mode 100644 main.cpp
+meatwad~/Dropbox/src/AnViL/misc/benchmarks/simpleLoopAdditionWithFunctionCall
+$ make run
+make: *** No rule to make target `run'.  Stop.
+meatwad~/Dropbox/src/AnViL/misc/benchmarks/simpleLoopAdditionWithFunctionCall
+$ cds
+meatwad~/Dropbox/src/AnViL
+$ make run
+mkdir -p derived
+make visitor
+g++ -std=c++11 -O3 -O3 -DNDEBUG  -shared -fPIC -o /home/meatwad/Dropbox/src/AnViL/derived/libAvlVisitor.so visitor/TreeWalker.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm  -fpermissive
+visitor/TreeWalker.cpp: In destructor 'anvil::TreeWalker::~TreeWalker()':
+visitor/TreeWalker.cpp:52:64: warning: invalid conversion from 'void*' to 'int (*)()' [-fpermissive]
+make all
+LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/meatwad/Dropbox/src/AnViL/derived g++ -std=c++11 -O3 -O3 -DNDEBUG  -o anvil main/main.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -L/home/meatwad/Dropbox/src/AnViL/derived -lAvlParser -lAvlVisitor -lAvlSymbolTable -lpthread -lm -ldl  -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm 
+./anvil demo.avl	
+100
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+200
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+Segmentation fault (core dumped)
+meatwad~/Dropbox/src/AnViL
+$ make run
+mkdir -p derived
+make visitor
+g++ -std=c++11 -O3 -g -DDEBUG  -shared -fPIC -o /home/meatwad/Dropbox/src/AnViL/derived/libAvlVisitor.so visitor/TreeWalker.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm  -fpermissive
+visitor/TreeWalker.cpp: In destructor 'anvil::TreeWalker::~TreeWalker()':
+visitor/TreeWalker.cpp:52:64: warning: invalid conversion from 'void*' to 'int (*)()' [-fpermissive]
+make all
+LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/meatwad/Dropbox/src/AnViL/derived g++ -std=c++11 -O3 -g -DDEBUG  -o anvil main/main.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -L/home/meatwad/Dropbox/src/AnViL/derived -lAvlParser -lAvlVisitor -lAvlSymbolTable -lpthread -lm -ldl  -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm 
+./anvil demo.avl	
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+}
+: x=sumIt(1,100,)
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+assignment
+FunctionCall
+Number
+Number
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %0 = call i32 @sumIt(i32 1, i32 100)
+  %R12_ = alloca i32
+  store i32 %0, i32* %R12_
+  %R12_3 = load i32* %R12_
+  ret i32 %R12_3
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_ = load i32* %R1_
+  %R5_1 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_1, %R1_
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_ = load i32* %R0_
+  %R3_ = load i32* %R3_
+  %R7_ = add i32 %R3_, %R0_
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_2 = load i32* %R5_
+  %R9_ = add i32 %R5_2, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+}
+make: *** [run] Segmentation fault (core dumped)
+meatwad~/Dropbox/src/AnViL
+$ make run
+mkdir -p derived
+make visitor
+g++ -std=c++11 -O3 -g -DDEBUG  -shared -fPIC -o /home/meatwad/Dropbox/src/AnViL/derived/libAvlVisitor.so visitor/TreeWalker.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm  -fpermissive
+visitor/TreeWalker.cpp: In destructor 'anvil::TreeWalker::~TreeWalker()':
+visitor/TreeWalker.cpp:52:64: warning: invalid conversion from 'void*' to 'int (*)()' [-fpermissive]
+make all
+LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/meatwad/Dropbox/src/AnViL/derived g++ -std=c++11 -O3 -g -DDEBUG  -o anvil main/main.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -L/home/meatwad/Dropbox/src/AnViL/derived -lAvlParser -lAvlVisitor -lAvlSymbolTable -lpthread -lm -ldl  -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm 
+./anvil demo.avl	
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+}
+: x=sumIt(1,100,)
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+assignment
+FunctionCall
+Number
+Number
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %0 = call i32 @sumIt(i32 1, i32 100)
+  %R12_ = alloca i32
+  store i32 %0, i32* %R12_
+  %R12_3 = load i32* %R12_
+  ret i32 %R12_3
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_ = load i32* %R1_
+  %R5_1 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_1, %R1_
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_ = load i32* %R0_
+  %R3_ = load i32* %R3_
+  %R7_ = add i32 %R3_, %R0_
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_2 = load i32* %R5_
+  %R9_ = add i32 %R5_2, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+}
+make: *** [run] Segmentation fault (core dumped)
+meatwad~/Dropbox/src/AnViL
+$ make run
+mkdir -p derived
+make visitor
+g++ -std=c++11 -O3 -g -DDEBUG  -shared -fPIC -o /home/meatwad/Dropbox/src/AnViL/derived/libAvlVisitor.so visitor/TreeWalker.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm  -fpermissive
+visitor/TreeWalker.cpp: In destructor 'anvil::TreeWalker::~TreeWalker()':
+visitor/TreeWalker.cpp:52:64: warning: invalid conversion from 'void*' to 'int (*)()' [-fpermissive]
+make all
+LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/meatwad/Dropbox/src/AnViL/derived g++ -std=c++11 -O3 -g -DDEBUG  -o anvil main/main.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -L/home/meatwad/Dropbox/src/AnViL/derived -lAvlParser -lAvlVisitor -lAvlSymbolTable -lpthread -lm -ldl  -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm 
+./anvil demo.avl	
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+}
+: x=sumIt(1,100,)
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+assignment
+FunctionCall
+Number
+Number
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %0 = call i32 @sumIt(i32 1, i32 100)
+  %R12_ = alloca i32
+  store i32 %0, i32* %R12_
+  %R12_1 = load i32* %R12_
+  ret i32 %R12_1
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+}
+make: *** [run] Segmentation fault (core dumped)
+meatwad~/Dropbox/src/AnViL
+$ make run
+mkdir -p derived
+make visitor
+g++ -std=c++11 -O3 -g -DDEBUG  -shared -fPIC -o /home/meatwad/Dropbox/src/AnViL/derived/libAvlVisitor.so visitor/TreeWalker.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm  -fpermissive
+visitor/TreeWalker.cpp: In destructor 'anvil::TreeWalker::~TreeWalker()':
+visitor/TreeWalker.cpp:52:64: warning: invalid conversion from 'void*' to 'int (*)()' [-fpermissive]
+make all
+LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/meatwad/Dropbox/src/AnViL/derived g++ -std=c++11 -O3 -g -DDEBUG  -o anvil main/main.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -L/home/meatwad/Dropbox/src/AnViL/derived -lAvlParser -lAvlVisitor -lAvlSymbolTable -lpthread -lm -ldl  -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm 
+./anvil demo.avl	
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+}
+: x=sumIt(1,100,)
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+assignment
+FunctionCall
+Number
+Number
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+make
+deddfine i32 @main() {
+mainBlock:
+  %0 = call i32 @sumIt(i32 1, i32 100)
+  %R12_ = alloca i32
+  store i32 %0, i32* %R12_
+  %R12_1 = load i32* %R12_
+  ret i32 %R12_1
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+}
+make: *** [run] Segmentation fault (core dumped)
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+treewalker
+: x=0
+: for loop
+: returnx
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R1_ = alloca i32
+  store i32 0, i32* %R1_
+  br label %setup
+
+setup:                                            ; preds = %mainBlock
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R3_1 = load i32* %R3_
+  %R5_ = icmp slt i32 %R3_1, 100
+  br i1 %R5_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R1_2 = load i32* %R1_
+  %R7_ = add i32 %R1_2, 1
+  store i32 %R7_, i32* %R1_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R3_3 = load i32* %R3_
+  %R9_ = add i32 %R3_3, 1
+  store i32 %R9_, i32* %R3_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R1_4 = load i32* %R1_
+  ret i32 %R1_4
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+100
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+:returnx
+}
+: x=0
+: for loop
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R11_ = alloca i32
+  store i32 0, i32* %R11_
+  br label %setup7
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R3_6 = load i32* %R3_
+  ret i32 %R3_6
+
+setup7:                                           ; preds = %mainBlock
+  %R13_ = alloca i32
+  store i32 0, i32* %R13_
+  br label %condition8
+
+condition8:                                       ; preds = %increment10, %setup7
+  %R13_12 = load i32* %R13_
+  %R15_ = icmp slt i32 %R13_12, 100
+  br i1 %R15_, label %body9, label %post11
+
+body9:                                            ; preds = %condition8
+  %R11_ = load i32* %R11_
+  %R17_ = add i32 %R11_, 1
+  store i32 %R17_, i32* %R11_
+  br label %increment10
+
+increment10:                                      ; preds = %body9
+  %R13_13 = load i32* %R13_
+  %R19_ = add i32 %R13_13, 1
+  store i32 %R19_, i32* %R13_
+  br label %condition8
+
+post11:                                           ; preds = %condition8
+  %R11_14 = load i32* %R11_
+  ret i32 %R11_14
+}
+Segmentation fault (core dumped)
+meatwad~/Dropbox/src/AnViL
+$ make run
+mkdir -p derived
+make visitor
+g++ -std=c++11 -O3 -g -DDEBUG  -shared -fPIC -o /home/meatwad/Dropbox/src/AnViL/derived/libAvlVisitor.so visitor/TreeWalker.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm  -fpermissive
+visitor/TreeWalker.cpp: In destructor 'anvil::TreeWalker::~TreeWalker()':
+visitor/TreeWalker.cpp:52:64: warning: invalid conversion from 'void*' to 'int (*)()' [-fpermissive]
+make all
+LD_LIBRARY_PATH=LD_LIBRARY_PATH:/home/meatwad/Dropbox/src/AnViL/derived g++ -std=c++11 -O3 -g -DDEBUG  -o anvil main/main.cpp -I/usr/include -I/home/meatwad/Dropbox/src/AnViL -I/home/meatwad/Dropbox/src/AnViL/derived -L/home/meatwad/Dropbox/src/AnViL/derived -lAvlParser -lAvlVisitor -lAvlSymbolTable -lpthread -lm -ldl  -I/mnt/raid/prog/src/llvm/include -I/mnt/raid/prog/src/llvm/include -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -O3 -fomit-frame-pointer -std=c++11 -fvisibility-inlines-hidden -fno-exceptions -fno-rtti -fPIC -Woverloaded-virtual -ffunction-sections -fdata-sections -Wcast-qual -L/mnt/raid/prog/src/llvm/Release/lib -lLLVMLTO -lLLVMObjCARCOpts -lLLVMLinker -lLLVMipo -lLLVMVectorize -lLLVMBitWriter -lLLVMIRReader -lLLVMAsmParser -lLLVMR600CodeGen -lLLVMR600Desc -lLLVMR600Info -lLLVMR600AsmPrinter -lLLVMSystemZDisassembler -lLLVMSystemZCodeGen -lLLVMSystemZAsmParser -lLLVMSystemZDesc -lLLVMSystemZInfo -lLLVMSystemZAsmPrinter -lLLVMHexagonCodeGen -lLLVMHexagonAsmPrinter -lLLVMHexagonDesc -lLLVMHexagonInfo -lLLVMNVPTXCodeGen -lLLVMNVPTXDesc -lLLVMNVPTXInfo -lLLVMNVPTXAsmPrinter -lLLVMCppBackendCodeGen -lLLVMCppBackendInfo -lLLVMMSP430CodeGen -lLLVMMSP430Desc -lLLVMMSP430Info -lLLVMMSP430AsmPrinter -lLLVMXCoreDisassembler -lLLVMXCoreCodeGen -lLLVMXCoreDesc -lLLVMXCoreInfo -lLLVMXCoreAsmPrinter -lLLVMMipsDisassembler -lLLVMMipsCodeGen -lLLVMMipsAsmParser -lLLVMMipsDesc -lLLVMMipsInfo -lLLVMMipsAsmPrinter -lLLVMAArch64Disassembler -lLLVMAArch64CodeGen -lLLVMAArch64AsmParser -lLLVMAArch64Desc -lLLVMAArch64Info -lLLVMAArch64AsmPrinter -lLLVMAArch64Utils -lLLVMARMDisassembler -lLLVMARMCodeGen -lLLVMARMAsmParser -lLLVMARMDesc -lLLVMARMInfo -lLLVMARMAsmPrinter -lLLVMPowerPCDisassembler -lLLVMPowerPCCodeGen -lLLVMPowerPCAsmParser -lLLVMPowerPCDesc -lLLVMPowerPCInfo -lLLVMPowerPCAsmPrinter -lLLVMSparcDisassembler -lLLVMSparcCodeGen -lLLVMSparcAsmParser -lLLVMSparcDesc -lLLVMSparcInfo -lLLVMSparcAsmPrinter -lgtest_main -lgtest -lLLVMTableGen -lLLVMDebugInfo -lLLVMOption -lLLVMX86Disassembler -lLLVMX86AsmParser -lLLVMX86CodeGen -lLLVMSelectionDAG -lLLVMAsmPrinter -lLLVMX86Desc -lLLVMMCDisassembler -lLLVMX86Info -lLLVMX86AsmPrinter -lLLVMX86Utils -lLLVMJIT -lLLVMLineEditor -lLLVMMCAnalysis -lLLVMInstrumentation -lLLVMInterpreter -lLLVMCodeGen -lLLVMScalarOpts -lLLVMInstCombine -lLLVMTransformUtils -lLLVMipa -lLLVMAnalysis -lLLVMProfileData -lLLVMMCJIT -lLLVMTarget -lLLVMRuntimeDyld -lLLVMObject -lLLVMMCParser -lLLVMBitReader -lLLVMExecutionEngine -lLLVMMC -lLLVMCore -lLLVMSupport -lz -lpthread -ltinfo -lrt -ldl -lm 
+./anvil demo.avl	
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+:returnx
+}
+: x=0
+: for loop
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R11_ = alloca i32
+  store i32 0, i32* %R11_
+  br label %setup
+
+setup:                                            ; preds = %mainBlock
+  %R13_ = alloca i32
+  store i32 0, i32* %R13_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R13_1 = load i32* %R13_
+  %R15_ = icmp slt i32 %R13_1, 100
+  br i1 %R15_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R11_2 = load i32* %R11_
+  %R17_ = add i32 %R11_2, 1
+  store i32 %R17_, i32* %R11_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R13_3 = load i32* %R13_
+  %R19_ = add i32 %R13_3, 1
+  store i32 %R19_, i32* %R13_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R11_4 = load i32* %R11_
+  ret i32 %R11_4
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R3_6 = load i32* %R3_
+  ret i32 %R3_6
+}
+100
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+:returnx
+}
+: x=0
+: for loop
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+FunctionCall
+Number
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R11_ = alloca i32
+  store i32 0, i32* %R11_
+  br label %setup
+
+setup:                                            ; preds = %mainBlock
+  %R13_ = alloca i32
+  store i32 0, i32* %R13_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R13_1 = load i32* %R13_
+  %R15_ = icmp slt i32 %R13_1, 100
+  br i1 %R15_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %0 = call i32 @sumIt(i32 1, i32 1)
+  %R11_2 = load i32* %R11_
+  %R18_ = add i32 %R11_2, %0
+  store i32 %R18_, i32* %R11_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R13_3 = load i32* %R13_
+  %R20_ = add i32 %R13_3, 1
+  store i32 %R20_, i32* %R13_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R11_4 = load i32* %R11_
+  ret i32 %R11_4
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R3_6 = load i32* %R3_
+  ret i32 %R3_6
+}
+100
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+:returnx
+}
+: x=0
+: for loop
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+FunctionCall
+Number
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R11_ = alloca i32
+  store i32 0, i32* %R11_
+  br label %setup
+
+setup:                                            ; preds = %mainBlock
+  %R13_ = alloca i32
+  store i32 0, i32* %R13_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R13_1 = load i32* %R13_
+  %R15_ = icmp slt i32 %R13_1, 100
+  br i1 %R15_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %0 = call i32 @sumIt(i32 1, i32 2)
+  %R11_2 = load i32* %R11_
+  %R18_ = add i32 %R11_2, %0
+  store i32 %R18_, i32* %R11_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R13_3 = load i32* %R13_
+  %R20_ = add i32 %R13_3, 1
+  store i32 %R20_, i32* %R13_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R11_4 = load i32* %R11_
+  ret i32 %R11_4
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R3_6 = load i32* %R3_
+  ret i32 %R3_6
+}
+200
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+:returnx
+}
+: x=0
+: for loop
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+FunctionCall
+Id
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R11_ = alloca i32
+  store i32 0, i32* %R11_
+  br label %setup
+
+setup:                                            ; preds = %mainBlock
+  %R13_ = alloca i32
+  store i32 0, i32* %R13_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R13_1 = load i32* %R13_
+  %R15_ = icmp slt i32 %R13_1, 100
+  br i1 %R15_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R11_2 = load i32* %R11_
+  %0 = call i32 @sumIt(i32 %R11_2, i32 2)
+  %R11_3 = load i32* %R11_
+  %R17_ = add i32 %R11_3, %0
+  store i32 %R17_, i32* %R11_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R13_4 = load i32* %R13_
+  %R19_ = add i32 %R13_4, 1
+  store i32 %R19_, i32* %R13_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R11_5 = load i32* %R11_
+  ret i32 %R11_5
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R3_6 = load i32* %R3_
+  ret i32 %R3_6
+}
+0
+meatwad~/Dropbox/src/AnViL
+$ ./anvil demo.avl
+treewalker
+: def sumIt(a,b,)
+{
+:x=0
+:for loop
+:returnx
+}
+: x=1
+: for loop
+: returnx
+function definition
+assignment
+Number
+assignment
+Number
+Id
+Id
+assignment
+Id
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+assignment
+Number
+assignment
+Number
+Number
+Id
+assignment
+FunctionCall
+Id
+Number
+Id
+assignment
+Number
+Id
+ReturnStatement
+Id
+##### LLVM IR #####
+; ModuleID = 'module'
+
+define i32 @main() {
+mainBlock:
+  %R11_ = alloca i32
+  store i32 1, i32* %R11_
+  br label %setup
+
+setup:                                            ; preds = %mainBlock
+  %R13_ = alloca i32
+  store i32 0, i32* %R13_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R13_1 = load i32* %R13_
+  %R15_ = icmp slt i32 %R13_1, 100
+  br i1 %R15_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R11_2 = load i32* %R11_
+  %0 = call i32 @sumIt(i32 %R11_2, i32 2)
+  %R11_3 = load i32* %R11_
+  %R17_ = add i32 %R11_3, %0
+  store i32 %R17_, i32* %R11_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R13_4 = load i32* %R13_
+  %R19_ = add i32 %R13_4, 1
+  store i32 %R19_, i32* %R13_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R11_5 = load i32* %R11_
+  ret i32 %R11_5
+}
+
+declare void* @malloc(i32)
+
+declare void* @free(i32)
+
+define i32 @sumIt(i32, i32) {
+load_function_arguments:
+  %R0_ = alloca i32
+  store i32 %0, i32* %R0_
+  %R1_ = alloca i32
+  store i32 %1, i32* %R1_
+  br label %first
+
+first:                                            ; preds = %load_function_arguments
+  %R3_ = alloca i32
+  store i32 0, i32* %R3_
+  br label %setup
+
+setup:                                            ; preds = %first
+  %R5_ = alloca i32
+  store i32 0, i32* %R5_
+  br label %condition
+
+condition:                                        ; preds = %increment, %setup
+  %R1_1 = load i32* %R1_
+  %R5_2 = load i32* %R5_
+  %R6_ = icmp slt i32 %R5_2, %R1_1
+  br i1 %R6_, label %body, label %post
+
+body:                                             ; preds = %condition
+  %R0_3 = load i32* %R0_
+  %R3_4 = load i32* %R3_
+  %R7_ = add i32 %R3_4, %R0_3
+  store i32 %R7_, i32* %R3_
+  br label %increment
+
+increment:                                        ; preds = %body
+  %R5_5 = load i32* %R5_
+  %R9_ = add i32 %R5_5, 1
+  store i32 %R9_, i32* %R5_
+  br label %condition
+
+post:                                             ; preds = %condition
+  %R3_6 = load i32* %R3_
+  ret i32 %R3_6
+}
+-818408495
+meatwad~/Dropbox/src/AnViL
+$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   Makefile
+#	modified:   ast/controlFlow.hpp
+#	modified:   ast/function.hpp
+#	modified:   ast/node.hpp
+#	modified:   ast/statements.hpp
+#	modified:   demo.avl
+#	modified:   main/main.cpp
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.avl
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.c
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.py
+#	deleted:    misc/benchmarks/simpleLoop/simple_0
+#	deleted:    misc/benchmarks/simpleLoop/simple_1
+#	deleted:    misc/benchmarks/simpleLoop/simple_2
+#	deleted:    misc/benchmarks/simpleLoop/simple_3
+#	deleted:    misc/benchmarks/simpleLoop/test.sh
+#	modified:   parser/Parser.cpp
+#	modified:   parser/Parser.hpp
+#	modified:   parser/anvil.y
+#	modified:   visitor/TreeWalker.cpp
+#	modified:   visitor/TreeWalker.hpp
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	misc/benchmarks/*shell*
+#	misc/benchmarks/simpleLoopAddition/
+#	misc/benchmarks/simpleLoopAdditionWithFunctionCall/
+#	misc/no_git/
+no changes added to commit (use "git add" and/or "git commit -a")
+meatwad~/Dropbox/src/AnViL
+$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   .gitignore
+#	modified:   Makefile
+#	modified:   ast/controlFlow.hpp
+#	modified:   ast/function.hpp
+#	modified:   ast/node.hpp
+#	modified:   ast/statements.hpp
+#	modified:   demo.avl
+#	modified:   main/main.cpp
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.avl
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.c
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.py
+#	deleted:    misc/benchmarks/simpleLoop/simple_0
+#	deleted:    misc/benchmarks/simpleLoop/simple_1
+#	deleted:    misc/benchmarks/simpleLoop/simple_2
+#	deleted:    misc/benchmarks/simpleLoop/simple_3
+#	deleted:    misc/benchmarks/simpleLoop/test.sh
+#	modified:   parser/Parser.cpp
+#	modified:   parser/Parser.hpp
+#	modified:   parser/anvil.y
+#	modified:   visitor/TreeWalker.cpp
+#	modified:   visitor/TreeWalker.hpp
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	misc/benchmarks/*shell*
+#	misc/benchmarks/simpleLoopAddition/
+#	misc/benchmarks/simpleLoopAdditionWithFunctionCall/
+no changes added to commit (use "git add" and/or "git commit -a")
+meatwad~/Dropbox/src/AnViL
+$ rm misc/benchmarks/*shell*
+meatwad~/Dropbox/src/AnViL
+$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes not staged for commit:
+#   (use "git add/rm <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   .gitignore
+#	modified:   Makefile
+#	modified:   ast/controlFlow.hpp
+#	modified:   ast/function.hpp
+#	modified:   ast/node.hpp
+#	modified:   ast/statements.hpp
+#	modified:   demo.avl
+#	modified:   main/main.cpp
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.avl
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.c
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.py
+#	deleted:    misc/benchmarks/simpleLoop/simple_0
+#	deleted:    misc/benchmarks/simpleLoop/simple_1
+#	deleted:    misc/benchmarks/simpleLoop/simple_2
+#	deleted:    misc/benchmarks/simpleLoop/simple_3
+#	deleted:    misc/benchmarks/simpleLoop/test.sh
+#	modified:   parser/Parser.cpp
+#	modified:   parser/Parser.hpp
+#	modified:   parser/anvil.y
+#	modified:   visitor/TreeWalker.cpp
+#	modified:   visitor/TreeWalker.hpp
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	misc/benchmarks/simpleLoopAddition/
+#	misc/benchmarks/simpleLoopAdditionWithFunctionCall/
+no changes added to commit (use "git add" and/or "git commit -a")
+meatwad~/Dropbox/src/AnViL
+$ git rm -r misc/benchmarks/simpleLoop
+rm 'misc/benchmarks/simpleLoop/simpleLoop.avl'
+rm 'misc/benchmarks/simpleLoop/simpleLoop.c'
+rm 'misc/benchmarks/simpleLoop/simpleLoop.py'
+rm 'misc/benchmarks/simpleLoop/simple_0'
+rm 'misc/benchmarks/simpleLoop/simple_1'
+rm 'misc/benchmarks/simpleLoop/simple_2'
+rm 'misc/benchmarks/simpleLoop/simple_3'
+rm 'misc/benchmarks/simpleLoop/test.sh'
+meatwad~/Dropbox/src/AnViL
+$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.avl
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.c
+#	deleted:    misc/benchmarks/simpleLoop/simpleLoop.py
+#	deleted:    misc/benchmarks/simpleLoop/simple_0
+#	deleted:    misc/benchmarks/simpleLoop/simple_1
+#	deleted:    misc/benchmarks/simpleLoop/simple_2
+#	deleted:    misc/benchmarks/simpleLoop/simple_3
+#	deleted:    misc/benchmarks/simpleLoop/test.sh
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   .gitignore
+#	modified:   Makefile
+#	modified:   ast/controlFlow.hpp
+#	modified:   ast/function.hpp
+#	modified:   ast/node.hpp
+#	modified:   ast/statements.hpp
+#	modified:   demo.avl
+#	modified:   main/main.cpp
+#	modified:   parser/Parser.cpp
+#	modified:   parser/Parser.hpp
+#	modified:   parser/anvil.y
+#	modified:   visitor/TreeWalker.cpp
+#	modified:   visitor/TreeWalker.hpp
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	misc/
+meatwad~/Dropbox/src/AnViL
+$ git add misc
+meatwad~/Dropbox/src/AnViL
+$ git status
+# On branch master
+# Your branch is ahead of 'origin/master' by 2 commits.
+#
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#	renamed:    misc/benchmarks/simpleLoop/simpleLoop.c -> misc/benchmarks/simpleLoopAddition/simple.c
+#	renamed:    misc/benchmarks/simpleLoop/simpleLoop.avl -> misc/benchmarks/simpleLoopAddition/simpleLoop.avl
+#	renamed:    misc/benchmarks/simpleLoop/simpleLoop.py -> misc/benchmarks/simpleLoopAddition/simpleLoop.py
+#	renamed:    misc/benchmarks/simpleLoop/simple_0 -> misc/benchmarks/simpleLoopAddition/simple_0
+#	renamed:    misc/benchmarks/simpleLoop/simple_1 -> misc/benchmarks/simpleLoopAddition/simple_1
+#	renamed:    misc/benchmarks/simpleLoop/simple_2 -> misc/benchmarks/simpleLoopAddition/simple_2
+#	renamed:    misc/benchmarks/simpleLoop/simple_3 -> misc/benchmarks/simpleLoopAddition/simple_3
+#	renamed:    misc/benchmarks/simpleLoop/test.sh -> misc/benchmarks/simpleLoopAddition/test.sh
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simple.c
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simpleLoop.avl
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simpleLoop.py
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simple_0
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simple_1
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simple_2
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/simple_3
+#	new file:   misc/benchmarks/simpleLoopAdditionWithFunctionCall/test.sh
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   .gitignore
+#	modified:   Makefile
+#	modified:   ast/controlFlow.hpp
+#	modified:   ast/function.hpp
+#	modified:   ast/node.hpp
+#	modified:   ast/statements.hpp
+#	modified:   demo.avl
+#	modified:   main/main.cpp
+#	modified:   parser/Parser.cpp
+#	modified:   parser/Parser.hpp
+#	modified:   parser/anvil.y
+#	modified:   visitor/TreeWalker.cpp
+#	modified:   visitor/TreeWalker.hpp
+#
+meatwad~/Dropbox/src/AnViL
+$ git commit -m "couple bug fixes around for loops and function calls"
