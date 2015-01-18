@@ -41,6 +41,10 @@ namespace anvil{
 
     SymbolTable();
 
+    /* ########## scopes ########## */
+    void descendScope();
+    void ascendScope();
+
     /* ########## names ########## */
 
     std::string getUniqueName();

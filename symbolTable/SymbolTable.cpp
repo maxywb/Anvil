@@ -30,11 +30,34 @@ namespace anvil{
     m_currentNames(new NamesMap()),
     m_currentVariables(new VariablesMap()),
     m_currentDefinedFunctions(new FunctionsMap())
-    {
-      m_names.push_back(m_currentNames);
-      m_variables.push_back(m_currentVariables);
-      m_definedFunctions.push_back(m_currentDefinedFunctions);
-    }
+  {
+    m_names.push_back(m_currentNames);
+    m_variables.push_back(m_currentVariables);
+    m_definedFunctions.push_back(m_currentDefinedFunctions);
+  }
+
+  /* ########## scopes ########## */
+  void SymbolTable::descendScope()
+  {
+    m_currentNames = std::shared_ptr<NamesMap>(new NamesMap());
+    m_currentVariables = std::shared_ptr<VariablesMap>(new VariablesMap());
+    m_currentDefinedFunctions = std::shared_ptr<FunctionsMap>(new FunctionsMap());
+
+    m_names.push_back(m_currentNames);
+    m_variables.push_back(m_currentVariables);
+    m_definedFunctions.push_back(m_currentDefinedFunctions);
+  }
+
+  void SymbolTable::ascendScope()
+  {
+    m_currentNames = m_names.back();
+    m_currentVariables = m_variables.back();
+    m_currentDefinedFunctions = m_definedFunctions.back();
+
+    m_names.pop_back();
+    m_variables.pop_back();
+    m_definedFunctions.pop_back();    
+  }
 
   /* ########## names ########## */
 
