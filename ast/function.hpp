@@ -16,14 +16,14 @@ namespace anvil{
   {
   private:
     std::string m_name;
-    std::list<Expression *> * m_parameters;
+    std::list<Id *> m_parameters;
 
     StatementList * m_body;
 
   public:
-    FunctionDefinition(std::string * name, std::list<Expression *> * params, 
+    FunctionDefinition(std::string * name, std::list<Id *> * params, 
 		       StatementList * body) 
-      : m_name(*name), m_parameters(params), m_body(body){}
+      : m_name(*name), m_parameters(params->begin(),params->end()), m_body(body){}
 
     std::string print(){
       std::ostringstream strs;
@@ -31,10 +31,8 @@ namespace anvil{
       strs << "def ";
       strs << m_name;
       strs << "(";
-      for(auto itr = m_parameters->begin();
-	  itr != m_parameters->end();
-	  ++itr) {
-	strs << (*itr)->print();
+      for(auto itr : m_parameters) {
+	strs << itr->print();
 	strs << ",";
       }
       strs << ")";
@@ -65,6 +63,11 @@ namespace anvil{
     std::string getName()
     {
       return m_name;
+    }
+
+    std::list<Id *> getParameters()
+    {
+      return m_parameters;
     }
 
   };

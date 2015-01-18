@@ -112,9 +112,6 @@ namespace anvil{
 
     llvm::AllocaInst * resultLocation;
 
-    std::cout << node->getName() << std::endl;
-    std::cout << m_symbolTable->hasName(node->getName()) << std::endl;
-
     if (m_symbolTable->hasName(node->getName())) {
       // already exists
       std::string resultName = m_symbolTable->getName(node->getName());
@@ -237,7 +234,7 @@ namespace anvil{
 
   void TreeWalker::visit(Number * node)
   {
-    PRINT("number" << std::endl);
+    PRINT("Number" << std::endl);
 
     std::string resultName = m_symbolTable->getUniqueName();
     
@@ -298,16 +295,71 @@ namespace anvil{
   {
 
     PRINT("function definition" << std::endl);
-    
-    llvm::Function * function =
-      (llvm::cast<llvm::Function>(m_module->getOrInsertFunction("main", 
-								llvm::Type::getInt32Ty(*m_context), // output
-								FunctionInputTerminator)));
 
-    m_symbolTable->addName(node->getName());
-    
+    llvm::Function * oldCurrentFunction = m_currentFunction;
+
+    std::list<Id *> parameters = node->getParameters();
     
 
+    llvm::Type * outputType = llvm::Type::getInt32Ty(*m_context);
+    std::vector<llvm::Type *> llvmParameters(parameters.size(),getInt32Type(m_context));
+    llvm::FunctionType * functionType = llvm::FunctionType::get(outputType,llvmParameters,false);
+    llvm::Function * function = llvm::cast<llvm::Function>(m_module->getOrInsertFunction(node->getName(),functionType));
+
+    m_symbolTable->storeFunctionDefinition(node->getName(), function);
+    
+    m_currentFunction = function;
+    m_symbolTable->descendScope();
+
+    // setup top level basic block
+    llvm::BasicBlock * argumentsBlock = llvm::BasicBlock::Create(*m_context, "load_function_arguments", function);
+    llvm::BasicBlock * firstBlock = llvm::BasicBlock::Create(*m_context, "first", function);
+
+    //
+    // TODO: abstract state saving
+    //       maybe................
+    //       depending on how many there are
+    //       becuase it's almost certainly faster this way
+    //
+
+    // save state
+    // alocate/assign the new stuff here to be std::swap'd later
+    llvm::BasicBlock * blockHolder = argumentsBlock;
+    std::unique_ptr<llvm::IRBuilder<>> builderHolder = getBuilder(argumentsBlock);
+    llvm::Function * functionHolder = function;
+
+    // new state
+    std::swap(argumentsBlock, m_currentBlock);
+    std::swap(builderHolder, m_currentBuilder);
+    std::swap(functionHolder, m_currentFunction);
+
+    llvm::Function::arg_iterator arguments = function->arg_begin();
+    
+
+    for (Id * p : parameters) {
+      std::string argumentName = m_symbolTable->addName(p->getId());
+      llvm::Value * argumentValue = arguments;
+      ++arguments;
+
+      // translate the input argument into a regular variable
+      llvm::AllocaInst * argumentVariable = m_currentBuilder->CreateAlloca(getInt32Type(m_context),0,argumentName);
+      m_currentBuilder->CreateStore(argumentValue, argumentVariable);
+
+      m_symbolTable->storeVariable(argumentName, argumentVariable);
+    }
+
+    m_currentBuilder->CreateBr(firstBlock);
+    m_currentBlock = firstBlock;
+    m_currentBuilder = getBuilder(m_currentBlock);
+
+    node->getBody()->visit(this);
+
+    m_symbolTable->ascendScope();
+
+    // restore old state
+    std::swap(argumentsBlock, m_currentBlock);
+    std::swap(builderHolder, m_currentBuilder);
+    std::swap(functionHolder, m_currentFunction);
 
   }
 
@@ -325,6 +377,8 @@ namespace anvil{
   }
   void TreeWalker::visit(ReturnStatement* node)
   {
+    PRINT("ReturnStatement" << std::endl);
+
     node->getExpression()->visit(this);
 
     llvm::Value * returnValue = node->getExpression()->getValue();
@@ -360,6 +414,21 @@ namespace anvil{
   void TreeWalker::visit(FunctionCall * node)
   {
     PRINT("FunctionCall" << std::endl);
+    
+    std::vector<llvm::Value *> functionArguments;
+
+    for (Expression * arg : node->getArguments()) {
+      arg->visit(this);
+      functionArguments.push_back(arg->getValue());
+    }
+    
+    //    CreateInvoke (Value *Callee, BasicBlock *NormalDest, BasicBlock *UnwindDest, ArrayRef< Value * > Args, const Twine &Name="")
+    
+    llvm::Function * functionToCall = m_symbolTable->getFunctionDefinition(node->getName());
+    llvm::Value * functionCallResult = m_currentBuilder->CreateCall(functionToCall, functionArguments);
+    
+    node->setValue(functionCallResult);
+    
   }
 
 }

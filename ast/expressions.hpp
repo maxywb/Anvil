@@ -52,17 +52,19 @@ namespace anvil{
   {
   private:
     std::string m_name;
-    Expression * m_arguments;
+    std::list<Expression *> m_arguments;
 
   public:
-    FunctionCall(std::string name, Expression * args) 
-      : m_name(name), m_arguments(args) {}
+    FunctionCall(std::string name, std::list<Expression *> * args) 
+      : m_name(name), m_arguments(*args) {}
     std::string print(){
       std::ostringstream strs;
       strs << m_name;
       strs << "(";
-      if(m_arguments){
-	strs << m_arguments->print();
+      if(m_arguments.size() > 0){
+	for ( auto arg : m_arguments) {
+	  strs << arg->print() <<",";
+	}
       }
       strs << ")";
       return strs.str();
@@ -71,6 +73,15 @@ namespace anvil{
     virtual void visit(TreeWalker * walker)
     {
       walker->visit(this);
+    }
+
+    std::string getName()
+    {
+      return m_name;
+    }
+    std::list<Expression *> getArguments()
+    {
+      return m_arguments;
     }
 
   };

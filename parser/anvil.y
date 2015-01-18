@@ -49,6 +49,7 @@
   double val;
   std::string * string;
 
+  std::list<anvil::Id * > * idList;
   std::list<anvil::Expression * > * exprList;
 
 };
@@ -61,7 +62,8 @@
 %type <conditionalBlock> conditional
 %type <functionCall> function_call
 %type <assignment> assignment
-%type <exprList> function_parameters
+%type <exprList> function_arguments
+%type <idList> function_parameters
 %type <functionDefinition> function_definition
 %type <statementList> statement_list
 
@@ -173,12 +175,7 @@ elif_list: elif_branch elif_list
     $$->push_front($1);
 }
 
-expression: expression COMMA expression
-{
-  $$ = new anvil::BinaryOperator(anvil::operators::Comma,$1,$3);
-}
-|
-literal
+expression: literal
 {
   $$ = $1;
 }
@@ -222,9 +219,20 @@ function_call: ID LP RP
   $$ = new anvil::FunctionCall(*$1,NULL);
 }
 |
-ID LP expression RP
+ID LP function_arguments RP
 {
   $$ = new anvil::FunctionCall(*$1,$3);
+}
+
+function_arguments: expression COMMA function_arguments
+{
+  $3->emplace_front($1);
+  $$ = $3;
+}
+| expression
+{
+  $$ = new std::list<anvil::Expression *>();
+  $$->emplace_front($1);
 }
 
 assignment: ID ASSIGN expression
@@ -237,15 +245,15 @@ function_definition: DEF ID LP function_parameters RP LC statement_list RC
   $$ = new anvil::FunctionDefinition($2,$4,$7);
 }
 
-function_parameters: expression COMMA function_parameters
+function_parameters: ID COMMA function_parameters
 {
-  $3->insert($3->begin(),$1);
+  $3->emplace_front(new anvil::Id($1));
   $$ = $3;
 }
-| expression
+| ID
 {
-  $$ = new std::list<anvil::Expression *>();
-  $$->insert($$->begin(),$1);
+  $$ = new std::list<anvil::Id *>();
+  $$->emplace_front(new anvil::Id($1));
 }
 
 loop: for_loop

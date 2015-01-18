@@ -50,13 +50,14 @@ namespace anvil{
 
   void SymbolTable::ascendScope()
   {
+    m_names.pop_back();
+    m_variables.pop_back();
+    m_definedFunctions.pop_back();    
+
     m_currentNames = m_names.back();
     m_currentVariables = m_variables.back();
     m_currentDefinedFunctions = m_definedFunctions.back();
 
-    m_names.pop_back();
-    m_variables.pop_back();
-    m_definedFunctions.pop_back();    
   }
 
   /* ########## names ########## */
@@ -129,7 +130,7 @@ namespace anvil{
 
   llvm::Function * SymbolTable::getFunctionDefinition(std::string name)
   {
-    ASSERT(hasFunction(name),"function definition doesn't name exists: " << name);
+    ASSERT(hasFunction(name),"function definition doesn't exist: " << name);
     return m_currentDefinedFunctions->at(name);
   }
 

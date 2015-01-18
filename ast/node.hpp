@@ -92,12 +92,17 @@ namespace anvil{
 
     void setValue(llvm::Value * newValue)
     {
+      std::cout << "setValue " << newValue << std::endl;
+
+      ASSERT(newValue, "setting NULL value");
       m_value = newValue;
     }
 
     llvm::Value * getValue()
     {
-      ASSERT(m_value, "requested NULL value");
+      if (!m_value) {
+	ASSERT(m_value, "requested NULL value");
+      }
       return m_value;
     }
 
