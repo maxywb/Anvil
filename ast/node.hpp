@@ -11,7 +11,11 @@
 #include <list>
 #include <sstream>
 
-namespace anvil{
+namespace llvm {
+  class Value;
+}
+
+namespace anvil {
 
 
   class Statement 
@@ -29,11 +33,6 @@ namespace anvil{
     virtual void visit(TreeWalker * walker) =0;
 
     virtual std::string print()=0;
-
-
-
-
-
   };
 
   class Expression : public Statement

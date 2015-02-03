@@ -1,5 +1,5 @@
 
-#include "TreeWalker.hpp"
+#include "CodeEmitter.hpp"
 
 #include "ast/ast.hpp"
 #include "ast/operators.hpp"
@@ -38,38 +38,15 @@
 
 namespace anvil{
 
-  TreeWalker::~TreeWalker() 
+  CodeEmitter::CodeEmitter(std::shared_ptr<SymbolTable> symbolTable, NameGenerator & nameGen) :
+    m_symbolTable(symbolTable),
+    m_nameGenerator(nameGen)
   {
-#ifdef DEBUG
-    std::cout << "##### LLVM IR #####" << std::endl;
-    llvm::outs() << *m_module.get();
-    llvm::outs().flush();
-
-
-#endif
-
-    llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(m_module)).create();
-    int (*function)() = EE->getPointerToFunction(m_mainFunction);
-
-#ifdef DEBUG
-    std::cout << function() << std::endl;
-#else
-    std::cout <<function() << std::endl;
-    //function();
-#endif
-
-    EE->freeMachineCodeForFunction(m_mainFunction);
-  }
-
-  TreeWalker::TreeWalker() : m_symbolTable(new SymbolTable()) 
-  {
-    PRINT("treewalker" << std::endl;);
-
-
+    PRINT("code emitter" << std::endl;);
 
     llvm::InitializeNativeTarget();
 
-    m_context = /*std::unique_ptr<llvm::LLVMContext>*/(new llvm::LLVMContext());
+    m_context = new llvm::LLVMContext();
 
     // make a module to hold the function
     m_module = llvm::make_unique<llvm::Module>("module", *m_context);
@@ -98,14 +75,35 @@ namespace anvil{
     m_currentFunction = m_mainFunction;
   }
 
-
-  void TreeWalker::visit(Expression * node)
+  CodeEmitter::~CodeEmitter() 
   {
+#ifdef DEBUG
+    std::cout << "##### LLVM IR #####" << std::endl;
+    llvm::outs() << *m_module.get();
+    llvm::outs().flush();
 
 
+#endif
+
+    llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(m_module)).create();
+    int (*function)() = EE->getPointerToFunction(m_mainFunction);
+
+#ifdef DEBUG
+    std::cout << function() << std::endl;
+#else
+    std::cout <<function() << std::endl;
+    //function();
+#endif
+
+    EE->freeMachineCodeForFunction(m_mainFunction);
   }
 
-  void TreeWalker::visit(Assignment * node)
+  void CodeEmitter::visit(Expression * node)
+  {
+    node->visit(this);
+  }
+
+  void CodeEmitter::visit(Assignment * node)
   {
     PRINT("assignment" << std::endl);
 
@@ -135,7 +133,7 @@ namespace anvil{
   }
 
     
-  void TreeWalker::visit(BinaryOperator * node)
+  void CodeEmitter::visit(BinaryOperator * node)
 
   {
     Expression * right = node->getRight();
@@ -151,7 +149,7 @@ namespace anvil{
 
     ASSERT(leftValue, "left of binary operator doesn't have a llvm::Value");
 
-    std::string resultName = m_symbolTable->getUniqueName();
+    std::string resultName = m_nameGenerator.getUniqueName();
     llvm::Value * resultValue = NULL;
 
     operators::BinaryOperatorType expressionType = node->getType();
@@ -204,7 +202,7 @@ namespace anvil{
 
   }
 
-  void TreeWalker::visit(Id * node)
+  void CodeEmitter::visit(Id * node)
   {
     PRINT("Id" << std::endl);
 
@@ -218,23 +216,28 @@ namespace anvil{
 
   }
 
-  void TreeWalker::visit(Statement * node)
+  void CodeEmitter::visit(Statement * node)
   {
     node->visit(this);
   }
 
-  void TreeWalker::visit(Number * node)
+  void CodeEmitter::visit(Double * node)
+  {
+    ASSERT(false, "Double not implemented");
+  }
+
+  void CodeEmitter::visit(Integer * node)
   {
     PRINT("Number" << std::endl);
 
-    std::string resultName = m_symbolTable->getUniqueName();
-    
-    llvm::Value * currentValue = m_currentBuilder->CreateAdd(LlvmInt32(m_currentBuilder,node->getInt()), LlvmInt32(m_currentBuilder,0), resultName);
+    std::string resultName = m_nameGenerator.getUniqueName();
+
+    llvm::Value * currentValue = m_currentBuilder->CreateAdd(LlvmInt32(m_currentBuilder,node->getValue()), LlvmInt32(m_currentBuilder,0), resultName);
     
     node->setValue(currentValue);
   }
 
-  void TreeWalker::visit(ForLoop * node)
+  void CodeEmitter::visit(ForLoop * node)
   {
 
 
@@ -291,7 +294,7 @@ namespace anvil{
     m_currentBuilder = getBuilder(postBlock);
   }
 
-  void TreeWalker::visit(FunctionDefinition * node)
+  void CodeEmitter::visit(FunctionDefinition * node)
   {
 
     PRINT("function definition" << std::endl);
@@ -308,30 +311,34 @@ namespace anvil{
     m_symbolTable->descendScope();
 
     // setup top level basic block
+    llvm::BasicBlock * captureBlock = llvm::BasicBlock::Create(*m_context, "load_captures", function);
     llvm::BasicBlock * argumentsBlock = llvm::BasicBlock::Create(*m_context, "load_function_arguments", function);
     llvm::BasicBlock * firstBlock = llvm::BasicBlock::Create(*m_context, "first", function);
 
     //
-    // TODO: abstract state saving
-    //       maybe................
+    // TODO: abstract state saving to be more generic
+    //       maybe...
     //       depending on how many there are
     //       becuase it's almost certainly faster this way
     //
 
     // save state
     // alocate/assign the new stuff here to be std::swap'd later
-    llvm::BasicBlock * blockHolder = argumentsBlock;
-    std::unique_ptr<llvm::IRBuilder<>> builderHolder = getBuilder(argumentsBlock);
-    llvm::Function * functionHolder = function;
+    llvm::BasicBlock * blockHolder = nullptr;
+    std::unique_ptr<llvm::IRBuilder<>> builderHolder = nullptr;
+    llvm::Function * functionHolder = nullptr;
 
     // new state
-    std::swap(argumentsBlock, m_currentBlock);
+    std::swap(blockHolder, m_currentBlock);
     std::swap(builderHolder, m_currentBuilder);
     std::swap(functionHolder, m_currentFunction);
 
+    m_currentBlock = argumentsBlock;
+    m_currentBuilder = getBuilder(m_currentBlock);
+    m_currentFunction = function;
+
     llvm::Function::arg_iterator arguments = function->arg_begin();
     
-
     for (Id * p : parameters) {
       std::string argumentName = m_symbolTable->addName(p->getId());
       llvm::Value * argumentValue = arguments;
@@ -354,26 +361,41 @@ namespace anvil{
 
     m_symbolTable->ascendScope();
 
+    // load closures
+    m_currentBlock = captureBlock;
+    m_currentBuilder = getBuilder(m_currentBlock);
+    m_currentBuilder->CreateBr(argumentsBlock);
+
+    // TODO:
+    // - get capture list from symbol table
+    // make struct to contain them
+
     // restore old state
-    std::swap(argumentsBlock, m_currentBlock);
+    std::swap(blockHolder, m_currentBlock);
     std::swap(builderHolder, m_currentBuilder);
     std::swap(functionHolder, m_currentFunction);
 
+
+
+
   }
 
-  void TreeWalker::visit(WhileLoop* node)
+  void CodeEmitter::visit(WhileLoop* node)
   {
-
+    ASSERT(false, "WhileLoop not implemented");
   }
-  void TreeWalker::visit(ConditionalBranch* node)
+
+  void CodeEmitter::visit(ConditionalBranch* node)
   {
-
+    ASSERT(false, "ConditionalBranch not implemented");
   }
-  void TreeWalker::visit(ConditionalBlock* node)
+
+  void CodeEmitter::visit(ConditionalBlock* node)
   {
-
+    ASSERT(false, "ConditionalBlock not implemented");
   }
-  void TreeWalker::visit(ReturnStatement* node)
+
+  void CodeEmitter::visit(ReturnStatement* node)
   {
     PRINT("ReturnStatement" << std::endl);
 
@@ -385,7 +407,7 @@ namespace anvil{
 
   }
 
-  void TreeWalker::descendScope(llvm::BasicBlock * bb, llvm::Function * f)
+  void CodeEmitter::descendScope(llvm::BasicBlock * bb, llvm::Function * f)
   {
 
     m_scope.push(Scope(bb, f));
@@ -396,7 +418,7 @@ namespace anvil{
 
   }
 
-  void TreeWalker::ascendScope()
+  void CodeEmitter::ascendScope()
   {
 
     Scope parent = m_scope.top();
@@ -409,7 +431,7 @@ namespace anvil{
 
   }
 
-  void TreeWalker::visit(FunctionCall * node)
+  void CodeEmitter::visit(FunctionCall * node)
   {
     PRINT("FunctionCall" << std::endl);
     

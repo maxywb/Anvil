@@ -86,21 +86,44 @@ namespace anvil{
 
   };
 
-  class Number : public Expression
+
+  class Integer : public Expression
+  {
+  private:
+    int m_value;
+
+  public:
+    Integer(int value) 
+      :  m_value(value) {}
+    
+    int getValue() {
+      return m_value;
+    }
+
+    std::string print(){
+      std::ostringstream strs;
+      strs << m_value;
+      return strs.str();
+    }
+
+    void visit(TreeWalker * walker)
+    {
+      walker->visit(this);
+    }
+
+  };
+
+  class Double : public Expression
   {
   private:
     double m_value;
 
   public:
-    Number(double value) 
+    Double(double value) 
       :  m_value(value) {}
     
-    double getDouble() {
+    double getValue() {
       return m_value;
-    }
-
-    int getInt() {
-      return static_cast<int>(m_value);
     }
 
     std::string print(){

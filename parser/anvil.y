@@ -31,7 +31,6 @@
 %union {
   anvil::Expression * expr;
   anvil::Statement * stmt;
-  anvil::Number * number;
   anvil::BinaryOperator * binaryOperator;
   anvil::FunctionCall * functionCall;
   anvil::Assignment * assignment;
@@ -45,7 +44,8 @@
   anvil::WhileLoop * whileLoop;
 
   char sym;
-  double val;
+  double doubleValue;
+  int intValue;
   std::string * string;
 
   std::list<anvil::Id * > * idList;
@@ -56,7 +56,7 @@
 
 
 //terminals
-%type <number> literal
+%type <expr> literal
 %type <expr> expression 
 %type <stmt> statement
 %type <conditionalBlock> conditional
@@ -81,11 +81,10 @@
 %token <sym>  SHIFT_LEFT DOT LC RC LP RP SEMI COMMA ASSIGN DEF IF ELSE ELIF FOR WHILE BREAK RETURN
 %token <sym>  LS RS 
 %token <string> ID 
-%token <val> NUM
+%token <doubleValue> DOUBLE
+%token <intValue> INT
 
- //associativity
-
-
+//associativity
 %left ADD MINUS LT
 %left MULTIPLY DIVIDE 
 %left COMMA
@@ -208,12 +207,17 @@ assignment
 {
   $$ = new anvil::Id($1);
 }
-literal: NUM
+literal: INT
 {
-  $$ = new anvil::Number(static_cast<double>($1));
+  $$ = new anvil::Integer($1);
   
 }
-
+|
+DOUBLE
+{
+  $$ = new anvil::Double($1);
+  
+}
 function_call: ID LP RP
 {
   $$ = new anvil::FunctionCall(*$1,NULL);
@@ -244,7 +248,10 @@ function_definition: DEF ID LP function_parameters RP LC statement_list RC
 {
   $$ = new anvil::FunctionDefinition($2,$4,$7);
 }
-
+| DEF ID LP RP LC statement_list RC
+{
+  $$ = new anvil::FunctionDefinition($2, new std::list<anvil::Id *>(), $6);
+}
 function_parameters: ID COMMA function_parameters
 {
   $3->emplace_front(new anvil::Id($1));
@@ -255,6 +262,7 @@ function_parameters: ID COMMA function_parameters
   $$ = new std::list<anvil::Id *>();
   $$->emplace_front(new anvil::Id($1));
 }
+
 
 loop: for_loop
 {

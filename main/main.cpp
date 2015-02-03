@@ -1,6 +1,8 @@
 #include "ast/ast.hpp"
 #include "parser/Parser.hpp"
-#include "visitor/TreeWalker.hpp"
+#include "visitor/CodeEmitter.hpp"
+#include "visitor/CaptureCreater.hpp"
+#include "symbolTable/SymbolTable.hpp"
 
 #include <iostream>
 
@@ -16,7 +18,14 @@ int main(int argc, char **argv)
   parser.setFile(argv[1]);
   parser.parse();
 
-  anvil::TreeWalker treeWalker;
+  anvil::NameGenerator nameGen;
+
+  std::weak_ptr<anvil::SymbolTable> nullParent;
+  std::shared_ptr<anvil::SymbolTable> symbolTable 
+    = std::shared_ptr<anvil::SymbolTable>(new anvil::SymbolTable(nullParent, nameGen));
+
+  anvil::CodeEmitter treeWalker(symbolTable, nameGen);
+  anvil::CaptureCreater tableMaker(symbolTable);
 
   std::list<anvil::Statement *> statements(parser.getTreeRoot()->begin(),
 					   parser.getTreeRoot()->end());

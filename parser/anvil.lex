@@ -21,8 +21,8 @@
 "break" { return BREAK;}
 "return" { return RETURN;}
 
-[0-9]+   { yylval.val = atoi(yytext); return NUM; }
-[0-9]+\.[0-9]   { yylval.val = atof(yytext); return NUM; }
+[0-9]+   { yylval.intValue = atoi(yytext); return INT; }
+[0-9]+\.[0-9]   { yylval.doubleValue = atof(yytext); return DOUBLE; }
 "+"  { yylval.sym = yytext[0]; return ADD; }
 "-"   { yylval.sym = yytext[0]; return MINUS; }
 "*"   { yylval.sym = yytext[0]; return MULTIPLY; }

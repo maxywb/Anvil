@@ -13,19 +13,37 @@ namespace llvm {
 
 namespace anvil{
 
+  struct FunctionCapture {
+    
+  };
 
+
+  class NameGenerator
+  {
+  private:
+    size_t m_nameCounter;
+    size_t getUniqueNumber();
+    
+  public:
+    NameGenerator();
+    ~NameGenerator();
+    std::string getUniqueName();
+  };
+
+  /*
+   * Represents the name resolution allowed in a given function scope.
+   */
   class SymbolTable
   {
   private:
     typedef std::unordered_map<std::string, std::string> NamesMap;
-
     typedef std::unordered_map<std::string, llvm::AllocaInst * > VariablesMap;
-
     typedef std::unordered_map<std::string, llvm::Function *> FunctionsMap;
 
+    std::weak_ptr<SymbolTable> m_parent;
+    std::list<std::unique_ptr<SymbolTable>> m_children;
+    FunctionCapture m_captures;
     
-    size_t m_nameCounter;
-
     std::list<std::shared_ptr<NamesMap>> m_names;
     std::shared_ptr<NamesMap> m_currentNames;
 
@@ -35,30 +53,29 @@ namespace anvil{
     std::list<std::shared_ptr<FunctionsMap>> m_definedFunctions;
     std::shared_ptr<FunctionsMap> m_currentDefinedFunctions;
 
-    size_t getUniqueNumber();
+    std::list<std::shared_ptr<VariablesMap>> m_capturedVariables;
+    std::shared_ptr<VariablesMap> m_currentCapturedVariables;
+
+    NameGenerator & m_nameGenerator;
 
   public:
 
-    SymbolTable();
+    SymbolTable(std::weak_ptr<SymbolTable> parent, NameGenerator & nameGen);
 
     /* ########## scopes ########## */
+
     void descendScope();
     void ascendScope();
 
     /* ########## names ########## */
 
-    std::string getUniqueName();
-
     bool hasName(std::string name);
 
     std::string addName(std::string name);
     
-    std::string addOrUpdateName(std::string name);
-
     std::string getName(std::string name);
 
     /* ########## variables ########## */
-
 
     bool hasVariable(std::string name);
 

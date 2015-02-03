@@ -15,7 +15,7 @@ bisonOuts = $(bisonOut) $(bisonOutH)
 flexOut = $(derived)/scanner.h
 flexBisonDefines = -DFLEX_FILE=\"$(flexOut)\" -DBISON_FILE=\"$(bisonOutH)\" 
 
-visitorIn = visitor/TreeWalker.cpp
+visitorIn = visitor/CodeEmitter.cpp visitor/CaptureCreater.cpp
 visitorOut = $(derived)/libAvlVisitor.so
 
 symbolTableIn = symbolTable/SymbolTable.cpp

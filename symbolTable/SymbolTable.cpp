@@ -4,7 +4,7 @@
 
 #include "llvm/IR/Instructions.h"
 
-//#include <memory>
+#include <memory>
 #include <stack>
 #include <string>
 #include <sstream>
@@ -16,20 +16,38 @@ namespace {
 
 namespace anvil{
 
+  NameGenerator::NameGenerator() :
+    m_nameCounter(0UL)
+  {}
+  NameGenerator::~NameGenerator() 
+  {
+    return;
+  }
 
-  // private methods
-  size_t SymbolTable::getUniqueNumber()
+  size_t NameGenerator::getUniqueNumber()
   {
     return m_nameCounter++;
   }
 
+  std::string NameGenerator::getUniqueName()
+  {
+    std::ostringstream strs;
+    strs << "R" << getUniqueNumber() << "_";
+    return strs.str();
+  }
+
+
+
   // public methods
 
-  SymbolTable::SymbolTable() : 
-    m_nameCounter(0UL),
+  SymbolTable::SymbolTable(std::weak_ptr<SymbolTable> parent, NameGenerator & nameGen) : 
+    m_parent(parent),
+    m_children(),
+    m_captures(),
     m_currentNames(new NamesMap()),
     m_currentVariables(new VariablesMap()),
-    m_currentDefinedFunctions(new FunctionsMap())
+    m_currentDefinedFunctions(new FunctionsMap()),
+    m_nameGenerator(nameGen)
   {
     m_names.push_back(m_currentNames);
     m_variables.push_back(m_currentVariables);
@@ -37,15 +55,18 @@ namespace anvil{
   }
 
   /* ########## scopes ########## */
+
   void SymbolTable::descendScope()
   {
     m_currentNames = std::shared_ptr<NamesMap>(new NamesMap());
     m_currentVariables = std::shared_ptr<VariablesMap>(new VariablesMap());
     m_currentDefinedFunctions = std::shared_ptr<FunctionsMap>(new FunctionsMap());
+    m_currentCapturedVariables = std::shared_ptr<VariablesMap>(new VariablesMap());
 
     m_names.push_back(m_currentNames);
     m_variables.push_back(m_currentVariables);
     m_definedFunctions.push_back(m_currentDefinedFunctions);
+    m_capturedVariables.push_back(m_currentCapturedVariables);
   }
 
   void SymbolTable::ascendScope()
@@ -53,47 +74,59 @@ namespace anvil{
     m_names.pop_back();
     m_variables.pop_back();
     m_definedFunctions.pop_back();    
+    m_capturedVariables.pop_back();
 
     m_currentNames = m_names.back();
     m_currentVariables = m_variables.back();
     m_currentDefinedFunctions = m_definedFunctions.back();
-
+    m_currentCapturedVariables = m_variables.back();
   }
 
   /* ########## names ########## */
 
-  std::string SymbolTable::getUniqueName()
-  {
-    std::ostringstream strs;
-    strs << "R" << getUniqueNumber() << "_";
-    return strs.str();
-  }
-
   bool SymbolTable::hasName(std::string name) 
   {
-    return m_currentNames->count(name) != 0;
+    for (auto namesRunner = m_names.crbegin();
+	 namesRunner != m_names.crend(); 
+	 ++namesRunner) {
+      
+      if ((*namesRunner)->count(name) != 0) { // dereference iterator 
+	return true;
+      }
+
+    }
+    
+    return false;
   }
 
   std::string SymbolTable::addName(std::string name)
   {
     ASSERT(!hasName(name),"name exists: " << name);
     
-    std::string mappedName = getUniqueName();
+    std::string mappedName = m_nameGenerator.getUniqueName();
     m_currentNames->emplace(name,mappedName);
     
     return mappedName;
   }
 
-  std::string SymbolTable::addOrUpdateName(std::string name)
-  {
-    m_currentNames->emplace(name,getUniqueName());
-    return getName(name);
-  }
-
   std::string SymbolTable::getName(std::string name)
   {
     ASSERT(hasName(name),"name doesn't exist: " << name);
-    return m_currentNames->at(name);
+
+    for (auto namesRunner = m_names.crbegin();
+	 namesRunner != m_names.crend(); 
+	 ++namesRunner) {
+      
+      if ((*namesRunner)->count(name) != 0) { // dereference iterator 
+	return (*namesRunner)->at(name); // dereference iterator 
+      }
+
+    }
+
+    // can't happen due to assertion above
+    ASSERT(false, "unknown getName failure");
+
+    return std::string();
   }
 
   /* ########## variables ########## */
@@ -101,7 +134,18 @@ namespace anvil{
 
   bool SymbolTable::hasVariable(std::string name)
   {
-    return m_currentVariables->count(name) != 0;
+    for (auto variablesRunner = m_variables.crbegin();
+	 variablesRunner != m_variables.crend(); 
+	 ++variablesRunner) {
+      
+      if ((*variablesRunner)->count(name) != 0) { // dereference iterator 
+	return true;
+      }
+
+    }
+    
+    return false;
+
   }
 
   void SymbolTable::storeVariable(std::string name, llvm::AllocaInst * variable)
@@ -112,7 +156,29 @@ namespace anvil{
   llvm::AllocaInst * SymbolTable::getVariable(std::string name)
   {
     ASSERT(hasVariable(name),"variable doesn't exist: " << name);
-    return m_currentVariables->at(name);
+
+    bool checkingUpScope = false;
+
+    llvm::AllocaInst * foundVariable = nullptr;
+
+    for (auto variablesRunner = m_variables.crbegin();
+	 variablesRunner != m_variables.crend(); 
+	 ++variablesRunner) {
+      
+      if ((*variablesRunner)->count(name) != 0) { // dereference iterator 
+	foundVariable =  (*variablesRunner)->at(name); // dereference iterator 
+
+	if (checkingUpScope) {
+	  m_currentCapturedVariables->emplace(name, foundVariable);
+	}
+
+	break;
+      }
+
+      checkingUpScope = true;
+    }
+
+    return foundVariable;
   }
 
   /* ########## defined functions ########## */
