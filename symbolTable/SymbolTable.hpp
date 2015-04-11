@@ -97,6 +97,15 @@ namespace anvil{
 
     llvm::Function * getFunctionDefinition(std::string name);
 
+    /* ########## defined captures ########## */
+
+
+    bool const hasCapture(std::string name) const;
+
+    void storeCaptureDefinition(std::string name, llvm::Capture * captureDefinition);
+
+    llvm::Capture * getCaptureDefinition(std::string name);
+
   };
 }
 #endif

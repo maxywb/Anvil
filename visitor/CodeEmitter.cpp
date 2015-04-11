@@ -124,7 +124,6 @@ namespace anvil{
     }
 
 
-
     llvm::Value * resultValue = node->getRHS()->getValue();
 
     m_currentBuilder->CreateStore(resultValue, resultLocation);
