@@ -37,65 +37,62 @@ namespace anvil{
     return strs.str();
   }
 
+  std::shared_ptr<SymbolTable> SymbolTable::parent() const
+  {
+    return m_parent.lock();
+  }
+
   // public methods
 
-  SymbolTable::SymbolTable(std::weak_ptr<SymbolTable> parent, NameGenerator & nameGen) : 
-    m_parent(parent),
+  SymbolTable::SymbolTable(NameGenerator & nameGen) : 
+    m_parent(),
     m_children(),
     m_captures(),
-    m_currentNames(new NamesMap()),
-    m_currentVariables(new VariablesMap()),
-    m_currentDefinedFunctions(new FunctionsMap()),
+    m_names(),
+    m_variables(),
+    m_definedFunctions(),
     m_nameGenerator(nameGen)
   {
-    m_names.push_back(m_currentNames);
-    m_variables.push_back(m_currentVariables);
-    m_definedFunctions.push_back(m_currentDefinedFunctions);
   }
 
-  /* ########## scopes ########## */
-
-  void SymbolTable::descendScope()
+  void SymbolTable::setParent(std::shared_ptr<SymbolTable> newParent)
   {
-    m_currentNames = std::shared_ptr<NamesMap>(new NamesMap());
-    m_currentVariables = std::shared_ptr<VariablesMap>(new VariablesMap());
-    m_currentDefinedFunctions = std::shared_ptr<FunctionsMap>(new FunctionsMap());
-    m_currentCapturedVariables = std::shared_ptr<VariablesMap>(new VariablesMap());
-
-    m_names.push_back(m_currentNames);
-    m_variables.push_back(m_currentVariables);
-    m_definedFunctions.push_back(m_currentDefinedFunctions);
-    m_capturedVariables.push_back(m_currentCapturedVariables);
+    m_parent = newParent;
   }
 
-  void SymbolTable::ascendScope()
+  std::shared_ptr<SymbolTable> SymbolTable::getParent() 
   {
-    m_names.pop_back();
-    m_variables.pop_back();
-    m_definedFunctions.pop_back();    
-    m_capturedVariables.pop_back();
+    return m_parent.lock();
+  }
 
-    m_currentNames = m_names.back();
-    m_currentVariables = m_variables.back();
-    m_currentDefinedFunctions = m_definedFunctions.back();
-    m_currentCapturedVariables = m_variables.back();
+  std::shared_ptr<SymbolTable> SymbolTable::makeChild()
+  {
+    std::shared_ptr<SymbolTable> newTable(new SymbolTable(m_nameGenerator));
+    newTable->setParent(shared_from_this());
+
+    m_children.push_back(newTable);    
+
+    return newTable;
+  }
+
+  std::list<std::shared_ptr<SymbolTable>> const & SymbolTable::getChildren()
+  {
+    return m_children;
   }
 
   /* ########## names ########## */
 
-  bool SymbolTable::hasName(std::string name) 
+  bool const SymbolTable::hasName(std::string name) const
   {
-    for (auto namesRunner = m_names.crbegin();
-	 namesRunner != m_names.crend(); 
-	 ++namesRunner) {
-      
-      if ((*namesRunner)->count(name) != 0) { // dereference iterator 
-	return true;
-      }
+    bool const foundIt = m_names.count(name);
 
+    if (foundIt) {
+      return true;
+    } else if (m_parent.use_count() > 0) {
+      return parent()->hasName(name);
+    } else {
+      return false;
     }
-    
-    return false;
   }
 
   std::string SymbolTable::addName(std::string name)
@@ -103,98 +100,77 @@ namespace anvil{
     ASSERT(!hasName(name),"name exists: " << name);
     
     std::string mappedName = m_nameGenerator.getUniqueName();
-    m_currentNames->emplace(name,mappedName);
+    m_names.emplace(name,mappedName);
     
     return mappedName;
   }
 
-  std::string SymbolTable::getName(std::string name)
+  std::string const SymbolTable::getName(std::string name) 
   {
     ASSERT(hasName(name),"name doesn't exist: " << name);
 
-    for (auto namesRunner = m_names.crbegin();
-	 namesRunner != m_names.crend(); 
-	 ++namesRunner) {
-      
-      if ((*namesRunner)->count(name) != 0) { // dereference iterator 
-	return (*namesRunner)->at(name); // dereference iterator 
-      }
-
+    if (m_names.count(name)) {
+      return m_names[name];
+    } else {
+      return parent()->getName(name);
     }
-
-    // can't happen due to assertion above
-    ASSERT(false, "unknown getName failure");
-
-    return std::string();
   }
 
   /* ########## variables ########## */
 
-  bool SymbolTable::hasVariable(std::string name)
+  bool const SymbolTable::hasVariable(std::string name) const
   {
-    for (auto variablesRunner = m_variables.crbegin();
-	 variablesRunner != m_variables.crend(); 
-	 ++variablesRunner) {
-      
-      if ((*variablesRunner)->count(name) != 0) { // dereference iterator 
-	return true;
-      }
+    bool const foundIt = m_variables.count(name) != 0;      
 
+    if (foundIt) {
+      return true;
+    } else if (m_parent.use_count() > 0) {
+      return parent()->hasVariable(name);
+    } else {
+      return false;
     }
-    
-    return false;
-
   }
 
   void SymbolTable::storeVariable(std::string name, llvm::AllocaInst * variable)
   {
-    m_currentVariables->emplace(name, variable);
+    m_variables.emplace(name, variable);
   }
 
-  llvm::AllocaInst * SymbolTable::getVariable(std::string name)
+  llvm::AllocaInst * SymbolTable::getVariable(std::string name) 
   {
     ASSERT(hasVariable(name),"variable doesn't exist: " << name);
 
-    bool checkingUpScope = false;
-
-    llvm::AllocaInst * foundVariable = nullptr;
-
-    for (auto variablesRunner = m_variables.crbegin();
-	 variablesRunner != m_variables.crend(); 
-	 ++variablesRunner) {
-      
-      if ((*variablesRunner)->count(name) != 0) { // dereference iterator 
-	foundVariable =  (*variablesRunner)->at(name); // dereference iterator 
-
-	if (checkingUpScope) {
-	  m_currentCapturedVariables->emplace(name, foundVariable);
-	}
-
-	break;
-      }
-
-      checkingUpScope = true;
+    if (m_variables.count(name)) {
+      return m_variables[name];
+    } else {
+      return parent()->getVariable(name);
     }
-
-    return foundVariable;
   }
 
   /* ########## defined functions ########## */
 
-  bool SymbolTable::hasFunction(std::string name)
+  bool const SymbolTable::hasFunction(std::string name) const
   {
-    return m_currentDefinedFunctions->count(name) != 0;
+    bool const foundIt = m_definedFunctions.count(name) != 0;      
+
+    if (foundIt) {
+      return true;
+    } else if (m_parent.use_count() > 0) {
+      return parent()->hasFunction(name);
+    } else {
+      return false;
+    }
   }
 
   void SymbolTable::storeFunctionDefinition(std::string name, llvm::Function * functionDefinition)
   {
-    m_currentDefinedFunctions->emplace(name, functionDefinition);
+    m_definedFunctions.emplace(name, functionDefinition);
   }
 
-  llvm::Function * SymbolTable::getFunctionDefinition(std::string name)
+  llvm::Function * SymbolTable::getFunctionDefinition(std::string name) 
   {
     ASSERT(hasFunction(name),"function definition doesn't exist: " << name);
-    return m_currentDefinedFunctions->at(name);
+    return m_definedFunctions.at(name);
   }
 
 

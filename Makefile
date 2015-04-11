@@ -64,6 +64,10 @@ $(symbolTableOut): $(symbolTableIn) | setup
 	@echo make symbol table
 	g++ $(CXX_FLAGS) -shared -fPIC -o $@ $(symbolTableIn) $(includes) $(llvmFlags) $(bad)
 
+.PHONY: parser
+parser: $(parserOut)
+	@echo parser
+
 .PHONY: testing
 testing: 
 	g++ -g -o  testing/testing.out testing/testing.cpp $(bad) $(CXX_FLAGS) $(llvmFlags)

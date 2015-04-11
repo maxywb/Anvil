@@ -308,7 +308,9 @@ namespace anvil{
 
     m_symbolTable->storeFunctionDefinition(node->getName(), function);
 
-    m_symbolTable->descendScope();
+    // m_symbolTable->descendScope();
+    //     
+    m_symbolTable = m_symbolTable->makeChild();
 
     // setup top level basic block
     llvm::BasicBlock * captureBlock = llvm::BasicBlock::Create(*m_context, "load_captures", function);
@@ -359,7 +361,9 @@ namespace anvil{
       stmt->visit(this);
     }
 
-    m_symbolTable->ascendScope();
+    //m_symbolTable->ascendScope();
+    m_symbolTable = m_symbolTable->getParent();
+
 
     // load closures
     m_currentBlock = captureBlock;

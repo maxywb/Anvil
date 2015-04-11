@@ -39,7 +39,7 @@ namespace anvil{
   /*
    * Represents the name resolution allowed in a given function scope.
    */
-  class SymbolTable
+  class SymbolTable : public std::enable_shared_from_this<SymbolTable>
   {
   private:
     typedef std::unordered_map<std::string, std::string> NamesMap;
@@ -50,40 +50,39 @@ namespace anvil{
     std::list<std::shared_ptr<SymbolTable>> m_children;
     std::list<FunctionCapture> m_captures;
     
-    std::list<std::shared_ptr<NamesMap>> m_names;
-    std::shared_ptr<NamesMap> m_currentNames;
+    NamesMap m_names;
 
-    std::list<std::shared_ptr<VariablesMap>> m_variables;
-    std::shared_ptr<VariablesMap> m_currentVariables;
+    VariablesMap m_variables;
 
-    std::list<std::shared_ptr<FunctionsMap>> m_definedFunctions;
-    std::shared_ptr<FunctionsMap> m_currentDefinedFunctions;
+    FunctionsMap m_definedFunctions;
 
-    std::list<std::shared_ptr<VariablesMap>> m_capturedVariables;
-    std::shared_ptr<VariablesMap> m_currentCapturedVariables;
+    VariablesMap m_capturedVariables;
 
     NameGenerator & m_nameGenerator;
 
+    std::shared_ptr<SymbolTable> parent() const;
+
   public:
 
-    SymbolTable(std::weak_ptr<SymbolTable> parent, NameGenerator & nameGen);
+    SymbolTable(NameGenerator & nameGen);
 
-    /* ########## scopes ########## */
+    void setParent(std::shared_ptr<SymbolTable> newParent);
+    std::shared_ptr<SymbolTable> getParent();
 
-    void descendScope();
-    void ascendScope();
+    std::shared_ptr<SymbolTable> makeChild();
+    std::list<std::shared_ptr<SymbolTable>> const & getChildren();
 
     /* ########## names ########## */
 
-    bool hasName(std::string name);
+    bool const hasName(std::string name) const;
 
     std::string addName(std::string name);
     
-    std::string getName(std::string name);
+    std::string const getName(std::string name);
 
     /* ########## variables ########## */
 
-    bool hasVariable(std::string name);
+    bool const hasVariable(std::string name) const;
 
     void storeVariable(std::string name, llvm::AllocaInst * variable);
 
@@ -92,7 +91,7 @@ namespace anvil{
     /* ########## defined functions ########## */
 
 
-    bool hasFunction(std::string name);
+    bool const hasFunction(std::string name) const;
 
     void storeFunctionDefinition(std::string name, llvm::Function * functionDefinition);
 

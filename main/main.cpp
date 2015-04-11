@@ -20,9 +20,8 @@ int main(int argc, char **argv)
 
   anvil::NameGenerator nameGen;
 
-  std::weak_ptr<anvil::SymbolTable> nullParent;
   std::shared_ptr<anvil::SymbolTable> symbolTable 
-    = std::shared_ptr<anvil::SymbolTable>(new anvil::SymbolTable(nullParent, nameGen));
+    = std::shared_ptr<anvil::SymbolTable>(new anvil::SymbolTable(nameGen));
 
   anvil::CodeEmitter treeWalker(symbolTable, nameGen);
   anvil::CaptureCreater tableMaker(symbolTable);
