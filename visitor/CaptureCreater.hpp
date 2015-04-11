@@ -1,5 +1,5 @@
-#ifndef ANVIL_IR_FINAGLER_HPP
-#define ANVIL_IR_FINAGLER_HPP
+#ifndef ANVIL_IR_CAPTURECREATOR_HPP
+#define ANVIL_IR_CAPTURECREATOR_HPP
 
 #include "TreeWalker.hpp"
 

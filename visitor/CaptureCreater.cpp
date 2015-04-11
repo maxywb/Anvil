@@ -17,52 +17,113 @@
 namespace anvil{
 
   CaptureCreater::~CaptureCreater() 
-  {  }
+  {  
+  }
 
-  CaptureCreater::CaptureCreater(std::shared_ptr<SymbolTable> symbolTable) : m_symbolTable(symbolTable) 
-  {  }
-
-  void CaptureCreater::visit(Expression * node)
-  {  }
+  CaptureCreater::CaptureCreater(std::shared_ptr<SymbolTable> symbolTable) : 
+    m_symbolTable(symbolTable) 
+  {  
+  }
 
   void CaptureCreater::visit(Assignment * node)
-  {  }
+  {
+    PRINT("assignment" << std::endl);
+
+    node->getRHS()->visit(this);
+
+    /* 
+     * new allocation kills existing variables, even in enclosing scopes, so there is nothing to
+     * do with the LHS
+     */ 
+  }
 
   void CaptureCreater::visit(BinaryOperator * node)
+  {
+    Expression * right = node->getRight();
+    Expression * left = node->getLeft();
 
-  {  }
+    right->visit(this);
+    left->visit(this);
+  }
 
   void CaptureCreater::visit(Id * node)
-  {  }
-
-  void CaptureCreater::visit(Statement * node)
-  {  }
-
-  void CaptureCreater::visit(Double * node)
-  {  }
-
-  void CaptureCreater::visit(Integer * node)
-  {  }
+  {
+    // TODO:
+    // look for assignment or use of variable in enclosing scopes
+  }
 
   void CaptureCreater::visit(ForLoop * node)
-  {  }
+  {
+    Expression * setup = node->getInitial();
+    Expression * condition = node->getCondition();
+    Expression * increment = node->getCounter();
+    std::list<Statement *> body = node->getBody();
+
+    setup->visit(this);
+
+    condition->visit(this);
+
+    for (auto stmt : body) {
+      stmt->visit(this);
+    }
+
+    increment->visit(this);
+  }
 
   void CaptureCreater::visit(FunctionDefinition * node)
-  {  }
+  {
+    for (auto stmt : node->getBody()) {
+      stmt->visit(this);
+    }
+  }
 
   void CaptureCreater::visit(WhileLoop* node)
-  {  }
+  {
+    ASSERT(false, "WhileLoop not implemented");
+  }
 
   void CaptureCreater::visit(ConditionalBranch* node)
-  {  }
+  {
+    ASSERT(false, "ConditionalBranch not implemented");
+  }
+
+  void CaptureCreater::visit(Statement * node)
+  {
+    ASSERT(false, "ConditionalBranch not implemented");
+  }
+
+  void CaptureCreater::visit(Expression* node)
+  {
+    ASSERT(false, "ConditionalBranch not implemented");
+  }
+
+  void CaptureCreater::visit(Double * node)
+  {
+    ASSERT(false, "ConditionalBranch not implemented");
+  }
+
+  void CaptureCreater::visit(Integer * node)
+  {
+    ASSERT(false, "ConditionalBranch not implemented");
+  }
 
   void CaptureCreater::visit(ConditionalBlock* node)
-  {  }
+  {
+    ASSERT(false, "ConditionalBlock not implemented");
+  }
 
   void CaptureCreater::visit(ReturnStatement* node)
-  {  }
+  {
+    node->getExpression()->visit(this);
+  }
 
   void CaptureCreater::visit(FunctionCall * node)
-  {  }
+  {
+    std::vector<llvm::Value *> functionArguments;
+
+    for (Expression * arg : node->getArguments()) {
+      arg->visit(this);
+    }
+  }
 
 }

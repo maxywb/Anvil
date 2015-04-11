@@ -10,11 +10,17 @@ namespace llvm {
 #include <unordered_map>
 #include <memory>
 #include <list>
+#include <utility>
 
 namespace anvil{
 
   struct FunctionCapture {
-    
+      std::pair<std::string,std::string> const names;
+      llvm::Function const * containingFunction;
+
+    FunctionCapture(std::string const uniqueName, std::string const name, llvm::Function const * _containingFunction)
+          : names(uniqueName, name), containingFunction(_containingFunction)
+      {}
   };
 
 
@@ -41,8 +47,8 @@ namespace anvil{
     typedef std::unordered_map<std::string, llvm::Function *> FunctionsMap;
 
     std::weak_ptr<SymbolTable> m_parent;
-    std::list<std::unique_ptr<SymbolTable>> m_children;
-    FunctionCapture m_captures;
+    std::list<std::shared_ptr<SymbolTable>> m_children;
+    std::list<FunctionCapture> m_captures;
     
     std::list<std::shared_ptr<NamesMap>> m_names;
     std::shared_ptr<NamesMap> m_currentNames;

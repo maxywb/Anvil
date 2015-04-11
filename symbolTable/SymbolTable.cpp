@@ -18,10 +18,11 @@ namespace anvil{
 
   NameGenerator::NameGenerator() :
     m_nameCounter(0UL)
-  {}
+  {
+  }
+
   NameGenerator::~NameGenerator() 
   {
-    return;
   }
 
   size_t NameGenerator::getUniqueNumber()
@@ -35,8 +36,6 @@ namespace anvil{
     strs << "R" << getUniqueNumber() << "_";
     return strs.str();
   }
-
-
 
   // public methods
 
@@ -131,7 +130,6 @@ namespace anvil{
 
   /* ########## variables ########## */
 
-
   bool SymbolTable::hasVariable(std::string name)
   {
     for (auto variablesRunner = m_variables.crbegin();
@@ -182,7 +180,6 @@ namespace anvil{
   }
 
   /* ########## defined functions ########## */
-
 
   bool SymbolTable::hasFunction(std::string name)
   {
