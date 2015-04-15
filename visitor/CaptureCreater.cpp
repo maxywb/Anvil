@@ -50,8 +50,8 @@ namespace anvil{
   {
     // TODO:
     // look for assignment or use of variable in enclosing scopes
-    if (m_symbolTable->getParent()->hasName(node->getName())) {
-      m_symbolTable->addCapture(node->getName(), nullptr);
+    if (m_symbolTable->getParent()->hasName(node->getId())) {
+      m_symbolTable->addCapture(node->getId());
     }
   }
 

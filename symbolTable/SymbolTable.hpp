@@ -14,16 +14,6 @@ namespace llvm {
 
 namespace anvil{
 
-  struct FunctionCapture {
-      std::pair<std::string,std::string> const names;
-      llvm::Function const * containingFunction;
-
-    FunctionCapture(std::string const uniqueName, std::string const name, llvm::Function const * _containingFunction)
-          : names(uniqueName, name), containingFunction(_containingFunction)
-      {}
-  };
-
-
   class NameGenerator
   {
   private:
@@ -48,7 +38,7 @@ namespace anvil{
 
     std::weak_ptr<SymbolTable> m_parent;
     std::list<std::shared_ptr<SymbolTable>> m_children;
-    std::list<FunctionCapture> m_captures;
+    std::list<std::string> m_captures;
     
     NamesMap m_names;
 
@@ -99,12 +89,11 @@ namespace anvil{
 
     /* ########## defined captures ########## */
 
+    void addCapture(std::string name);
 
-    bool const hasCapture(std::string name) const;
+    void propagateCaptures(std::string name);
 
-    void storeCaptureDefinition(std::string name, llvm::Capture * captureDefinition);
-
-    llvm::Capture * getCaptureDefinition(std::string name);
+    llvm::Function * getCaptureDefinition(std::string name);
 
   };
 }

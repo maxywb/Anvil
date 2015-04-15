@@ -175,28 +175,35 @@ namespace anvil{
 
   /* ########## defined captures ########## */
 
-  bool const SymbolTable::hasCapture(std::string name) const
+  void SymbolTable::addCapture(std::string name)
   {
-    bool const foundIt = m_definedCaptures.count(name) != 0;      
+    m_captures.push_back(name);
+  }
 
-    if (foundIt) {
-      return true;
-    } else if (m_parent.use_count() > 0) {
-      return parent()->hasCapture(name);
-    } else {
-      return false;
+  void SymbolTable::propagateCaptures(std::string name)
+  {
+
+    std::shared_ptr<SymbolTable> runner = parent();
+
+    while (runner.use_count() > 0) {
+
+      if (runner->hasName(name)) {
+	break;
+      }
+
+      runner->addCapture(name);
+
+      //
+      runner = runner->getParent();
     }
+
   }
 
-  void SymbolTable::storeCaptureDefinition(std::string name, llvm::Function * captureDefinition)
-  {
-    m_definedCaptures.emplace(name, captureDefinition);
-  }
 
   llvm::Function * SymbolTable::getCaptureDefinition(std::string name) 
   {
-    ASSERT(hasCapture(name),"capture definition doesn't exist: " << name);
-    return m_definedCaptures.at(name);
+    ASSERT(false, "get capture definition");//hasCapture(name),"capture definition doesn't exist: " << name);
+    return m_definedFunctions.at(name);
   }
 
 
