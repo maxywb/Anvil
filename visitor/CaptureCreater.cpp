@@ -31,10 +31,18 @@ namespace anvil{
 
     node->getRHS()->visit(this);
 
-    /* 
-     * new allocation kills existing variables, even in enclosing scopes, so there is nothing to
-     * do with the LHS
-     */ 
+
+    if (m_symbolTable->hasName(node->getName())) {
+      // already exists
+      return;
+    } else {
+      // new allocation
+      std::string resultName = m_symbolTable->addName(node->getName());
+      resultLocation = m_currentBuilder->CreateAlloca(getInt32Type(m_context),0,resultName);
+
+      m_symbolTable->storeVariable(resultName, resultLocation);
+    }
+
   }
 
   void CaptureCreater::visit(BinaryOperator * node)

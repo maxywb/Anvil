@@ -207,5 +207,17 @@ namespace anvil{
   }
 
 
+  void SymbolTable::addUsedVariable(std::string & name)
+  {
+    
+  }
+  
+  void SymbolTable::addAssignedVariable(std::string & name)
+  {
+
+  }
+
+
+
 }
 

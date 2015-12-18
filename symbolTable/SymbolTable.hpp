@@ -11,6 +11,7 @@ namespace llvm {
 #include <memory>
 #include <list>
 #include <utility>
+#include <set>
 
 namespace anvil{
 
@@ -47,6 +48,9 @@ namespace anvil{
     FunctionsMap m_definedFunctions;
 
     VariablesMap m_capturedVariables;
+
+    std::set<std::string> m_assignedVariables;
+    std::set<std::string> m_usedVariables;
 
     NameGenerator & m_nameGenerator;
 
@@ -94,6 +98,11 @@ namespace anvil{
     void propagateCaptures(std::string name);
 
     llvm::Function * getCaptureDefinition(std::string name);
+
+    /* ########## used/assigned variables ########## */
+
+    void addUsedVariable(std::string & name);
+    void addAssignedVariable(std::string & name);
 
   };
 }
