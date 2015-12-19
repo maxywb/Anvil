@@ -12,7 +12,7 @@
 
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/ExecutionEngine/Interpreter.h"
-#include "llvm/ExecutionEngine/JIT.h"
+#include "llvm/ExecutionEngine/MCJIT.h"
 #include "llvm/IR/Constants.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/IRBuilder.h"
@@ -95,7 +95,7 @@ namespace anvil{
     //function();
 #endif
 
-    EE->freeMachineCodeForFunction(m_mainFunction);
+    //EE->freeMachineCodeForFunction(m_mainFunction);
   }
 
   void CodeEmitter::visit(Expression * node)

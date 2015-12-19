@@ -37,10 +37,6 @@ namespace anvil{
       return;
     } else {
       // new allocation
-      std::string resultName = m_symbolTable->addName(node->getName());
-      resultLocation = m_currentBuilder->CreateAlloca(getInt32Type(m_context),0,resultName);
-
-      m_symbolTable->storeVariable(resultName, resultLocation);
     }
 
   }
