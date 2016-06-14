@@ -1,0 +1,34 @@
+	//
+	// dax 000
+	// dcx 001
+	// ddx 010
+	// dbx 011
+	// dsp 100
+	// dbp 101
+	// dsi 110
+	// ddi 111
+	
+
+	// %rax, %rbx, %rcx, %rdx, %rsi, %rdi 
+	// %rdi, %rsi, %rdx, %rcx, %r8 and %r9 in order for function parameters
+	
+	mov %rdi,  %rax
+	mov %rsi,  %rbx	
+	add %rax, %rbx
+	ret
+
+
+	
+
+
+0:  89 d8                   mov    eax,ebx
+2:  89 d1                   mov    ecx,edx
+4:  89 fe                   mov    esi,edi
+
+		mov %rax, %rbx
+	mov %rcx, %rdx
+	mov %rsi, %rdi
+	
+	mov %rdi, %rsi
+	mov %rdx, %rcx
+	mov %r8 %r9

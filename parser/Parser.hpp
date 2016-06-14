@@ -16,19 +16,19 @@ extern FILE * yyin;
 extern std::list<anvil::Statement * > * s_root;
 
 namespace anvil{
-  class Parser 
-  {
-  private:
-    std::list<Statement  *> * m_treeRoot;
+class Parser 
+{
+ private:
+  std::list<Statement  *> * m_treeRoot;
     
-  public:
-    void setFile(char * file);
+ public:
+  void setFile(char * file);
 
-    void parse();
+  void parse();
 
-    std::list<Statement *> * getTreeRoot();
+  std::list<Statement *> * getTreeRoot();
 
-  };
+};
 
 
 }

@@ -59,6 +59,7 @@ namespace anvil{
 								FunctionInputTerminator)));
     
     // initialize malloc 
+#if 0
     llvm::PointerType * mallocOutput = llvm::PointerType::get(llvm::Type::getVoidTy(*m_context),0);
     llvm::FunctionType * mallocPrototype = llvm::FunctionType::get(mallocOutput, {llvm::Type::getInt32Ty(*m_context)}, FunctionInputTerminator);
     m_malloc = llvm::cast<llvm::Function>(m_module->getOrInsertFunction("malloc",mallocPrototype));
@@ -68,7 +69,7 @@ namespace anvil{
     llvm::PointerType * freeOutput = llvm::PointerType::get(llvm::Type::getVoidTy(*m_context),0);
     llvm::FunctionType * freePrototype = llvm::FunctionType::get(freeOutput, {llvm::Type::getInt32Ty(*m_context)}, FunctionInputTerminator);
     m_free = llvm::cast<llvm::Function>(m_module->getOrInsertFunction("free",freePrototype));
-
+#endif
     // setup top level basic block
     m_currentBlock = llvm::BasicBlock::Create(*m_context, "mainBlock", m_mainFunction);
     m_currentBuilder = getBuilder(m_currentBlock);
@@ -81,18 +82,21 @@ namespace anvil{
     std::cout << "##### LLVM IR #####" << std::endl;
     llvm::outs() << *m_module.get();
     llvm::outs().flush();
-
-
+    std::cout << "# build function" << std::endl;
 #endif
-
+    
     llvm::ExecutionEngine* EE = llvm::EngineBuilder(std::move(m_module)).create();
+                                
+    EE->finalizeObject();
+
     int (*function)() = EE->getPointerToFunction(m_mainFunction);
 
 #ifdef DEBUG
+    std::cout << "#" << std::endl;
     std::cout << function() << std::endl;
+    std::cout << "#" << std::endl;
 #else
-    std::cout <<function() << std::endl;
-    //function();
+    function();
 #endif
 
     //EE->freeMachineCodeForFunction(m_mainFunction);
